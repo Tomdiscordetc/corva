@@ -6,7 +6,10 @@
   "auth": {
     "login": {
       "title": "Anmelden",
-      "subtitle": "Willkommen zurück. Melde dich mit deinem Firmenkonto an.",
+      "subtitle": "Melde dich mit deinem Firmenkonto an und mach dort weiter, wo du aufgehört hast.",
+      "eyebrow": "CRM für Vermittlerteams",
+      "welcome": "Willkommen zurück",
+      "channels": "E-Mail  ·  Telefon  ·  WhatsApp  ·  Social Media",
       "email": "E-Mail-Adresse",
       "emailPlaceholder": "vorname.nachname@firma.de",
       "password": "Passwort",
@@ -14,6 +17,12 @@
       "submit": "Anmelden",
       "submitting": "Wird geprüft …",
       "forgotPassword": "Passwort vergessen?",
+      "forgotPasswordNotice": "Der Passwort-Reset wird mit dem echten Server-Login aktiviert.",
+      "companyAccount": "Geschützter Firmenzugang",
+      "showPassword": "Passwort anzeigen",
+      "hidePassword": "Passwort verbergen",
+      "successTitle": "Anmeldung erfolgreich",
+      "successSubtitle": "Dein Arbeitsbereich wird vorbereitet …",
       "firstLoginHint": "Beim ersten Login legst du ein eigenes Passwort fest.",
       "twoFactorPlaceholder": "Zwei-Faktor-Authentifizierung folgt in einem späteren Abschnitt.",
       "genericError": "E-Mail oder Passwort ist falsch."

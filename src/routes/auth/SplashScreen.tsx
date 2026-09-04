@@ -1,63 +1,67 @@
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { useNavigate } from "react-router-dom";
+import { CORVA_LOGO_PATHS } from "@/components/shell/Logo";
 import { t } from "@/i18n";
 
-const DRAW: [string, string][] = [
-  [
-    "M28 10.5C25.8 8.3 22.9 7 19.7 7 12.7 7 7 12.7 7 19.7s5.7 12.7 12.7 12.7c3.2 0 6.1-1.2 8.3-3.2",
-    "var(--color-text)",
-  ],
-  [
-    "M13 21.3c1.9 3.6 5.7 6 10 6 6.2 0 11.3-5.1 11.3-11.3S29.2 4.7 23 4.7c-2.8 0-5.4 1-7.4 2.8",
-    "var(--color-accent)",
-  ],
-];
+const DRAW = [
+  [CORVA_LOGO_PATHS[0], "var(--color-text)"],
+  [CORVA_LOGO_PATHS[1], "var(--color-accent)"],
+] as const;
 
-/**
- * Marken-Startbildschirm: erscheint nur beim Kaltstart der Sitzung
- * (sessionStorage-Flag), nicht bei jedem Login. Signet zeichnet sich selbst,
- * dann Übergabe an die Anmeldung.
- */
+/** Marken-Startbildschirm, einmal pro Browser-Sitzung. */
 export function SplashScreen() {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer = window.setTimeout(() => {
       sessionStorage.setItem("corva.splash-seen", "1");
       navigate("/login", { replace: true });
-    }, 1400);
-    const readyTimer = setTimeout(() => setReady(true), 50);
+    }, reduceMotion ? 300 : 1400);
+    const readyTimer = window.setTimeout(() => setReady(true), 50);
     return () => {
-      clearTimeout(timer);
-      clearTimeout(readyTimer);
+      window.clearTimeout(timer);
+      window.clearTimeout(readyTimer);
     };
-  }, [navigate]);
+  }, [navigate, reduceMotion]);
 
   return (
-    <div className="flex h-dvh w-full flex-col items-center justify-center gap-4 bg-surface-sunken">
-      <svg viewBox="0 0 40 40" fill="none" className="size-16">
-        {DRAW.map(([d, stroke], i) => (
-          <motion.path
-            key={i}
-            d={d}
-            stroke={stroke}
-            strokeWidth="3.2"
-            strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={ready ? { pathLength: 1, opacity: 1 } : {}}
-            transition={{ duration: 0.9, ease: [0.32, 0.72, 0, 1], delay: i * 0.12 }}
-          />
-        ))}
-      </svg>
-      <motion.p
-        initial={{ opacity: 0, y: 4 }}
-        animate={ready ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5, delay: 0.5 }}
-        className="text-sm font-medium tracking-wide text-text-muted"
+    <div className="relative flex h-dvh w-full flex-col items-center justify-center gap-4 overflow-hidden bg-surface-sunken">
+      <div aria-hidden className="auth-page-glow pointer-events-none absolute inset-0" />
+      <motion.div
+        className="relative flex size-24 items-center justify-center rounded-full border border-line bg-surface-overlay shadow-[var(--shadow-raised)] backdrop-blur-lg"
+        initial={reduceMotion ? false : { opacity: 0, scale: 0.88 }}
+        animate={ready ? { opacity: 1, scale: 1 } : {}}
+        transition={{ duration: reduceMotion ? 0 : 0.35 }}
       >
-        {t("app.name")}
+        <svg viewBox="0 0 40 40" fill="none" className="size-14">
+          {DRAW.map(([d, stroke], index) => (
+            <motion.path
+              key={d}
+              d={d}
+              stroke={stroke}
+              strokeWidth="3.2"
+              strokeLinecap="round"
+              initial={reduceMotion ? false : { pathLength: 0, opacity: 0 }}
+              animate={ready ? { pathLength: 1, opacity: 1 } : {}}
+              transition={{
+                duration: reduceMotion ? 0 : 0.9,
+                ease: [0.32, 0.72, 0, 1],
+                delay: reduceMotion ? 0 : index * 0.12,
+              }}
+            />
+          ))}
+        </svg>
+      </motion.div>
+      <motion.p
+        initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+        animate={ready ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: reduceMotion ? 0 : 0.5, delay: reduceMotion ? 0 : 0.5 }}
+        className="text-sm font-semibold tracking-wide text-text"
+      >
+        {t("app.name").toLowerCase()}
       </motion.p>
     </div>
   );

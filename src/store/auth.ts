@@ -22,6 +22,7 @@ interface AuthState {
   previewRole: Role | null;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
+  clearError: () => void;
   logout: () => void;
   setPreviewRole: (role: Role | null) => void;
   effectiveRole: () => Role | null;
@@ -55,6 +56,9 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       },
       error: null,
     });
+  },
+  clearError() {
+    set({ error: null });
   },
   logout() {
     set({ status: "signed-out", user: null, previewRole: null, error: null });

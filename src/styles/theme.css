@@ -60,6 +60,8 @@
   --color-line: var(--color-neutral-150);
   --color-line-strong: var(--color-neutral-300);
   --color-focus-ring: var(--color-accent);
+  --color-auth-brand: var(--color-neutral-950);
+  --color-on-auth-brand: var(--color-neutral-0);
 
   /* Kräftige Gegenfläche (Primärbutton, aktiver Menüpunkt, Kurzinfo, Schalter).
      Im Hellmodus fast schwarz auf hell, im Dunkelmodus fast weiß auf dunkel —
@@ -103,6 +105,7 @@
   --shadow-soft: 0 1px 2px color-mix(in oklch, var(--color-neutral-1000) 4%, transparent), 0 2px 8px color-mix(in oklch, var(--color-neutral-1000) 4%, transparent);
   --shadow-raised: 0 2px 4px color-mix(in oklch, var(--color-neutral-1000) 5%, transparent), 0 8px 24px color-mix(in oklch, var(--color-neutral-1000) 8%, transparent);
   --shadow-overlay: 0 12px 32px color-mix(in oklch, var(--color-neutral-1000) 12%, transparent), 0 2px 8px color-mix(in oklch, var(--color-neutral-1000) 6%, transparent);
+  --shadow-auth-mark: 0 24px 80px color-mix(in oklch, var(--color-accent) 28%, transparent);
 }
 
 /* Bewegung: eigene Variablen (kein Tailwind-Namensraum), zurückhaltend aber
@@ -241,6 +244,27 @@ body {
 
 ::selection {
   background: var(--color-accent-subtle);
+}
+
+/* Login-Bühne: dekorative Raster und Lichtflächen, zentral tokenisiert. */
+.auth-page-glow {
+  background:
+    radial-gradient(circle at 76% 22%, color-mix(in oklch, var(--color-accent) 13%, transparent), transparent 30%),
+    radial-gradient(circle at 18% 82%, color-mix(in oklch, var(--color-accent) 8%, transparent), transparent 28%);
+}
+
+.auth-brand-grid {
+  background-image:
+    linear-gradient(color-mix(in oklch, var(--color-on-auth-brand) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, var(--color-on-auth-brand) 7%, transparent) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 78%, transparent);
+}
+
+.auth-brand-glow {
+  background:
+    radial-gradient(circle at 50% 48%, color-mix(in oklch, var(--color-accent) 25%, transparent), transparent 32%),
+    radial-gradient(circle at 92% 8%, color-mix(in oklch, var(--color-accent) 18%, transparent), transparent 24%);
 }
 
 :focus-visible {
