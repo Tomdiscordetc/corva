@@ -25,26 +25,30 @@ export function Sidebar() {
       <div className="mb-4 flex items-center justify-center text-text max-lg:hidden">
         <Logo />
       </div>
-      {items.map((item) => (
-        <Tooltip key={item.path} content={item.label} side="right">
-          <NavLink
-            viewTransition
-            to={item.path}
-            end={item.path === "/app"}
-            onClick={() => markNavDirection(pathname, item.path)}
-            className={({ isActive }) =>
-              cn(
+      {items.map((item) => {
+        // Radix' Trigger (asChild) fügt className als String zusammen — eine
+        // Funktion würde als Quelltext im Attribut landen. Daher hier selbst
+        // auswerten statt NavLinks ({ isActive }) => ... zu nutzen.
+        const isActive = item.path === "/app" ? pathname === "/app" : pathname.startsWith(item.path);
+        return (
+          <Tooltip key={item.path} content={item.label} side="right">
+            <NavLink
+              viewTransition
+              to={item.path}
+              end={item.path === "/app"}
+              onClick={() => markNavDirection(pathname, item.path)}
+              className={cn(
                 "flex size-11 items-center justify-center rounded-md text-text-muted",
                 "transition-colors duration-[var(--t-fast)] ease-[var(--ease-standard)]",
                 "hover:bg-surface-hover hover:text-text",
                 isActive && "bg-invert text-on-invert hover:bg-invert hover:text-on-invert",
-              )
-            }
-          >
-            <item.icon className="size-5" />
-          </NavLink>
-        </Tooltip>
-      ))}
+              )}
+            >
+              <item.icon className="size-5" />
+            </NavLink>
+          </Tooltip>
+        );
+      })}
     </nav>
   );
 }
