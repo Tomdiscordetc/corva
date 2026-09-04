@@ -42,6 +42,13 @@ export function UnlockSequence() {
           <Logo className="relative z-0 size-11 text-text" />
 
           <motion.span
+            className="unlock-scan absolute inset-y-0 z-30 w-8"
+            initial={reduceMotion ? false : { x: -76, opacity: 0 }}
+            animate={reduceMotion ? { opacity: 0 } : { x: [-76, -76, 116], opacity: [0, 0.9, 0] }}
+            transition={{ duration: 2.2, times: [0, 0.6, 1], ease: [0.32, 0.72, 0, 1] }}
+          />
+
+          <motion.span
             className="absolute inset-y-0 left-0 z-10 w-1/2 border-r border-line bg-surface-raised"
             animate={reduceMotion ? { x: "-105%" } : { x: ["0%", "0%", "-105%"] }}
             transition={{ duration: reduceMotion ? 0 : 1.85, times: [0, 0.62, 1], ease: [0.32, 0.72, 0, 1] }}
@@ -101,6 +108,16 @@ export function UnlockSequence() {
         >
           <Check className="size-4" strokeWidth={3} />
         </motion.span>
+
+        {[0, 1, 2].map((ring) => (
+          <motion.span
+            key={ring}
+            className="absolute inset-8 rounded-full border border-accent/25"
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.55 }}
+            animate={reduceMotion ? { opacity: 0 } : { opacity: [0, 0.55, 0], scale: [0.55, 1.38, 1.72] }}
+            transition={{ duration: 1.45, delay: 1.34 + ring * 0.18, ease: "easeOut" }}
+          />
+        ))}
       </div>
 
       <motion.p

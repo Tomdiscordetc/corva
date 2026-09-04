@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { LogoLockup } from "@/components/shell/Logo";
 import { toast } from "@/components/ui/Toast";
+import { cn } from "@/lib/cn";
 import { AuthVisual } from "./AuthVisual";
 import { UnlockSequence, UNLOCK_DURATION_MS } from "./UnlockSequence";
 import { t } from "@/i18n";
@@ -40,6 +41,7 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [continueToApp, setContinueToApp] = useState(false);
   const reduceMotion = useReducedMotion();
+  const authFlowActive = status !== "signed-out";
 
   useEffect(() => {
     if (status !== "signed-in") return;
@@ -108,32 +110,49 @@ export function LoginPage() {
         ))}
       </div>
 
-      <div className="relative mx-auto grid min-h-dvh w-full lg:grid-cols-2">
-        <motion.section
+      <div className="relative mx-auto min-h-dvh w-full">
+        <motion.div
           initial={reduceMotion ? false : { opacity: 0, x: -18 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.92, ease: [0.32, 0.72, 0, 1] }}
-          className="relative m-3 hidden min-h-0 overflow-hidden rounded-xl bg-auth-brand p-10 text-on-auth-brand lg:flex lg:flex-col"
+          animate={authFlowActive
+            ? { opacity: 0, x: "-108%", scale: 0.97, filter: "blur(8px)" }
+            : { opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
+          transition={{ duration: reduceMotion ? 0 : 1.2, ease: [0.32, 0.72, 0, 1] }}
+          className="absolute inset-y-0 left-0 hidden w-1/2 p-3 lg:block"
         >
-          <div aria-hidden className="auth-brand-grid pointer-events-none absolute inset-0 opacity-35" />
-          <div aria-hidden className="auth-brand-glow pointer-events-none absolute inset-0" />
+          <section className="relative flex size-full min-h-0 flex-col overflow-hidden rounded-xl bg-auth-brand p-10 text-on-auth-brand">
+            <div aria-hidden className="auth-brand-grid pointer-events-none absolute inset-0 opacity-35" />
+            <div aria-hidden className="auth-brand-glow pointer-events-none absolute inset-0" />
 
-          <LogoLockup className="relative z-10 text-on-auth-brand" markClassName="text-on-auth-brand" />
+            <LogoLockup className="relative z-10 text-on-auth-brand" markClassName="text-on-auth-brand" />
 
-          <div className="relative z-10 my-auto flex flex-col items-center py-8 text-center">
-            <p className="mb-4 text-2xs font-semibold tracking-widest text-on-auth-brand/55 uppercase">
-              {t("auth.login.eyebrow")}
-            </p>
-            <h1 className="max-w-lg text-2xl font-semibold tracking-tight text-on-auth-brand">
-              {t("app.tagline")}
-            </h1>
-            <AuthVisual />
-          </div>
+            <div className="relative z-10 my-auto flex flex-col items-center py-8 text-center">
+              <p className="mb-4 text-2xs font-semibold tracking-widest text-on-auth-brand/55 uppercase">
+                {t("auth.login.eyebrow")}
+              </p>
+              <h1 className="max-w-lg text-2xl font-semibold tracking-tight text-on-auth-brand">
+                {t("app.tagline")}
+              </h1>
+              <AuthVisual />
+            </div>
 
-          <p className="relative z-10 text-xs text-on-auth-brand/45">{t("auth.login.channels")}</p>
-        </motion.section>
+            <p className="relative z-10 text-xs text-on-auth-brand/45">{t("auth.login.channels")}</p>
+          </section>
+        </motion.div>
 
-        <section className="flex min-h-dvh items-center justify-center px-5 py-20 sm:px-10 lg:py-10">
+        <section
+          className={cn(
+            "relative ml-auto flex min-h-dvh w-full items-center justify-center px-5 py-20",
+            "transition-[width] duration-[var(--t-auth-swipe)] ease-[var(--ease-standard)] sm:px-10 lg:py-10",
+            authFlowActive ? "lg:w-full" : "lg:w-1/2",
+          )}
+        >
+          <motion.div
+            aria-hidden
+            className="auth-unlock-field pointer-events-none absolute inset-0"
+            initial={false}
+            animate={{ opacity: authFlowActive ? 1 : 0, scale: authFlowActive ? 1 : 0.94 }}
+            transition={{ duration: reduceMotion ? 0 : 1.25, ease: [0.32, 0.72, 0, 1] }}
+          />
           <motion.div variants={panel} initial="hidden" animate="show" className="w-full max-w-md">
             <motion.div variants={row} className="mb-10 lg:hidden">
               <LogoLockup className="text-text" />
