@@ -26,4 +26,4 @@ export const router = createBrowserRouter([
       { path: "styleguide", element: <StyleguidePage /> },
     ],
   },
-]);
+], { basename: import.meta.env.BASE_URL });
