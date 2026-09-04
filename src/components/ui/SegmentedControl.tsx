@@ -11,19 +11,21 @@ interface SegmentedControlProps<T extends string> {
   value: T;
   onChange: (value: T) => void;
   "aria-label": string;
+  className?: string;
 }
 
 export function SegmentedControl<T extends string>({
   options,
   value,
   onChange,
+  className,
   ...props
 }: SegmentedControlProps<T>) {
   return (
     <div
       role="radiogroup"
       aria-label={props["aria-label"]}
-      className="inline-flex rounded-md bg-surface-muted p-1"
+      className={cn("inline-flex rounded-md bg-surface-muted p-1", className)}
     >
       {options.map((opt) => {
         const active = opt.value === value;

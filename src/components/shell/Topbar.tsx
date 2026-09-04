@@ -59,7 +59,7 @@ export function Topbar() {
             />
           )}
         </AnimatePresence>
-        <kbd className="rounded-[6px] border border-line-strong bg-surface px-1.5 py-0.5 text-2xs text-text-faint">
+        <kbd className="rounded-[6px] border border-line-strong bg-surface px-1.5 py-0.5 text-2xs text-text-faint max-sm:hidden">
           Strg K
         </kbd>
       </button>
@@ -69,6 +69,7 @@ export function Topbar() {
           aria-label={t("topbar.density")}
           value={density}
           onChange={(v: Density) => setDensity(v)}
+          className="max-md:hidden"
           options={[
             { value: "comfortable", label: t("topbar.densityComfortable") },
             { value: "compact", label: t("topbar.densityCompact") },

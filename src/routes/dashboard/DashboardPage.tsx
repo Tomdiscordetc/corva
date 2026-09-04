@@ -77,7 +77,13 @@ export function DashboardPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <motion.div
+            key={isPending ? "trend-skeleton" : "trend-content"}
+            className="grid grid-cols-1 gap-4 lg:grid-cols-3"
+            initial={isPending ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.15, ease: [0.32, 0.72, 0, 1] }}
+          >
             <Card className="lg:col-span-2">
               <CardHeader>
                 <div>
@@ -106,9 +112,15 @@ export function DashboardPage() {
                 )}
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <motion.div
+            key={isPending ? "pipeline-skeleton" : "pipeline-content"}
+            className="grid grid-cols-1 gap-4 lg:grid-cols-3"
+            initial={isPending ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.25, ease: [0.32, 0.72, 0, 1] }}
+          >
             <Card className="lg:col-span-2">
               <CardHeader>
                 <div>
@@ -137,7 +149,7 @@ export function DashboardPage() {
                 )}
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
         </>
       )}
     </div>

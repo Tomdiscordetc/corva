@@ -19,7 +19,7 @@ export function Sidebar() {
         "flex shrink-0 flex-col items-center gap-1 border-r border-line bg-surface py-4",
         "max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:z-40 max-lg:h-16 max-lg:flex-row",
         "max-lg:justify-around max-lg:border-r-0 max-lg:border-t max-lg:py-0",
-        "w-16",
+        "lg:w-16",
       )}
     >
       <div className="mb-4 flex items-center justify-center text-text max-lg:hidden">
