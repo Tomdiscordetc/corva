@@ -5,16 +5,20 @@ import { cn } from "@/lib/cn";
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  /** Markiert das Feld als fehlerhaft, ohne eine eigene Meldung darunter zu
+   *  setzen — für Formulare mit einer gemeinsamen Meldung über mehrere Felder. */
+  invalid?: boolean;
   hint?: string;
   trailing?: ReactNode;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { className, label, error, hint, trailing, id, ...props },
+  { className, label, error, invalid, hint, trailing, id, ...props },
   ref,
 ) {
   const generatedId = useId();
   const inputId = id ?? generatedId;
+  const isInvalid = !!error || !!invalid;
   const describedBy = error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined;
 
   return (
@@ -28,14 +32,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         <input
           ref={ref}
           id={inputId}
-          aria-invalid={!!error}
+          aria-invalid={isInvalid}
           aria-describedby={describedBy}
           className={cn(
             "h-11 w-full rounded-md border bg-surface px-3.5 text-sm text-text placeholder:text-text-faint",
             "transition-[border-color,box-shadow] duration-[var(--t-fast)] ease-[var(--ease-standard)]",
             "border-line-strong outline-none",
             "focus-visible:border-accent focus-visible:ring-4 focus-visible:ring-accent-tint",
-            error && "border-danger focus-visible:border-danger focus-visible:ring-danger-tint",
+            isInvalid && "border-danger focus-visible:border-danger focus-visible:ring-danger-tint",
             trailing && "pr-10",
             className,
           )}
