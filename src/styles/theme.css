@@ -1,0 +1,165 @@
+@import "tailwindcss";
+@import "./fonts.css";
+
+/*
+  Corva Design-Tokens
+  Alle Farben, Abstände, Radien und Zeiten stehen ausschließlich hier.
+  Kein Baustein definiert eigene Werte (REGELN.md Punkt 7).
+
+  Farbschema: Schwarz-Weiß-Neutralskala + ein Signalton (elektrisches Blau).
+  Skala in OKLCH für gleichmäßige Helligkeitsabstände und eine saubere
+  Grundlage für den späteren Dunkelmodus (gleiche Token-Namen, andere Werte).
+*/
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Rohe Neutralskala (leicht kühler Blauton bei 260°, damit sie zum Akzent passt) */
+  --color-neutral-0: oklch(100% 0 0);
+  --color-neutral-25: oklch(99% 0.002 260);
+  --color-neutral-50: oklch(97.5% 0.003 260);
+  --color-neutral-100: oklch(95.2% 0.004 260);
+  --color-neutral-150: oklch(92.5% 0.005 260);
+  --color-neutral-200: oklch(89% 0.006 260);
+  --color-neutral-300: oklch(80% 0.008 260);
+  --color-neutral-400: oklch(68% 0.010 260);
+  --color-neutral-500: oklch(56% 0.012 260);
+  --color-neutral-600: oklch(46% 0.012 260);
+  --color-neutral-700: oklch(36% 0.011 260);
+  --color-neutral-800: oklch(27% 0.010 260);
+  --color-neutral-900: oklch(19% 0.009 260);
+  --color-neutral-950: oklch(13% 0.008 260);
+  --color-neutral-1000: oklch(8% 0.006 260);
+
+  /* Signalton: elektrisches Blau */
+  --color-accent-tint: oklch(94% 0.035 259);
+  --color-accent-subtle: oklch(88% 0.07 259);
+  --color-accent: oklch(62% 0.20 259);
+  --color-accent-hover: oklch(57% 0.20 259);
+  --color-active: oklch(51% 0.19 259);
+  --color-accent-text: oklch(38% 0.16 259);
+
+  /* Status */
+  --color-positive: oklch(62% 0.15 148);
+  --color-positive-tint: oklch(94% 0.05 148);
+  --color-warning: oklch(74% 0.15 78);
+  --color-warning-tint: oklch(95% 0.06 78);
+  --color-danger: oklch(58% 0.21 25);
+  --color-danger-tint: oklch(94% 0.06 25);
+
+  /* Semantische Oberflächen- und Textfarben — hell, Dunkelmodus überschreibt
+     dieselben Namen später über [data-theme="dark"]. */
+  --color-surface: var(--color-neutral-0);
+  --color-surface-raised: var(--color-neutral-0);
+  --color-surface-sunken: var(--color-neutral-50);
+  --color-surface-overlay: color-mix(in oklch, var(--color-neutral-0) 72%, transparent);
+  --color-text: var(--color-neutral-950);
+  --color-text-muted: var(--color-neutral-600);
+  --color-text-faint: var(--color-neutral-400);
+  --color-text-on-accent: var(--color-neutral-0);
+  --color-line: var(--color-neutral-150);
+  --color-line-strong: var(--color-neutral-300);
+  --color-focus-ring: var(--color-accent);
+
+  /* Radien */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+
+  /* Schriftgrößen (Skala aus dem Plan) */
+  --text-2xs: 0.75rem;
+  --text-2xs--line-height: 1rem;
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.125rem;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.375rem;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.75rem;
+  --text-xl--line-height: 2.125rem;
+  --text-2xl: 2.125rem;
+  --text-2xl--line-height: 2.5rem;
+
+  --shadow-soft: 0 1px 2px color-mix(in oklch, var(--color-neutral-1000) 4%, transparent), 0 2px 8px color-mix(in oklch, var(--color-neutral-1000) 4%, transparent);
+  --shadow-raised: 0 2px 4px color-mix(in oklch, var(--color-neutral-1000) 5%, transparent), 0 8px 24px color-mix(in oklch, var(--color-neutral-1000) 8%, transparent);
+  --shadow-overlay: 0 12px 32px color-mix(in oklch, var(--color-neutral-1000) 12%, transparent), 0 2px 8px color-mix(in oklch, var(--color-neutral-1000) 6%, transparent);
+}
+
+/* Bewegung: eigene Variablen (kein Tailwind-Namensraum), zurückhaltend aber
+   überall. Kurve = sanftes Ausschwingen ohne Überschwingen. */
+:root {
+  --ease-standard: cubic-bezier(0.32, 0.72, 0, 1);
+  --t-fast: 120ms;
+  --t-base: 180ms;
+  --t-slow: 240ms;
+  --t-page: 320ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-fast: 0.01ms;
+    --t-base: 0.01ms;
+    --t-slow: 0.01ms;
+    --t-page: 0.01ms;
+  }
+}
+
+html {
+  color-scheme: light;
+  background: var(--color-surface-sunken);
+}
+
+body {
+  margin: 0;
+  background: var(--color-surface-sunken);
+  color: var(--color-text);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabellarische Ziffern überall, wo Zahlen untereinanderstehen sollen. */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: var(--color-accent-subtle);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+@keyframes tooltip-in {
+  from { opacity: 0; transform: translateY(2px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}

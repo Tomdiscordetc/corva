@@ -1,0 +1,99 @@
+{
+  "app": {
+    "name": "Corva",
+    "tagline": "Alle Kontaktwege an einem Ort"
+  },
+  "auth": {
+    "login": {
+      "title": "Anmelden",
+      "subtitle": "Willkommen zurück. Melde dich mit deinem Firmenkonto an.",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "vorname.nachname@firma.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "Dein Passwort",
+      "submit": "Anmelden",
+      "submitting": "Wird geprüft …",
+      "forgotPassword": "Passwort vergessen?",
+      "firstLoginHint": "Beim ersten Login legst du ein eigenes Passwort fest.",
+      "twoFactorPlaceholder": "Zwei-Faktor-Authentifizierung folgt in einem späteren Abschnitt.",
+      "genericError": "E-Mail oder Passwort ist falsch."
+    }
+  },
+  "nav": {
+    "dashboard": "Übersicht",
+    "contacts": "Kontakte",
+    "inbox": "Posteingang",
+    "calendar": "Kalender",
+    "tasks": "Aufgaben",
+    "reports": "Auswertung",
+    "settings": "Einstellungen"
+  },
+  "topbar": {
+    "search": "Suchen …",
+    "searchShortcutHint": "Suche öffnen",
+    "notifications": "Benachrichtigungen",
+    "viewAs": "Ansicht als",
+    "density": "Dichte",
+    "densityComfortable": "Luftig",
+    "densityCompact": "Kompakt",
+    "logout": "Abmelden"
+  },
+  "commandPalette": {
+    "placeholder": "Befehl oder Seite suchen …",
+    "empty": "Keine Treffer.",
+    "groupNav": "Bereiche",
+    "groupActions": "Aktionen"
+  },
+  "dashboard": {
+    "title": "Übersicht",
+    "subtitle": "Vertriebsstand heute, {{team}}",
+    "demoNotice": "Demo-Daten — noch keine echten Kontakte verbunden",
+    "kpi": {
+      "newLeads": "Neue Anfragen",
+      "openConsultations": "Offene Beratungen",
+      "closedDeals": "Abschlüsse",
+      "conversionRate": "Abschlussquote",
+      "vsLastWeek": "ggü. Vorwoche"
+    },
+    "trend": {
+      "title": "Neue Anfragen",
+      "subtitle": "Letzte 14 Tage"
+    },
+    "pipeline": {
+      "title": "Pipeline",
+      "subtitle": "Von der Anfrage bis zum Abschluss",
+      "stages": {
+        "new": "Neu",
+        "contacted": "Kontaktiert",
+        "consultation": "Beratung",
+        "offer": "Angebot",
+        "won": "Abschluss"
+      }
+    },
+    "tasks": {
+      "title": "Aufgaben heute",
+      "empty": "Für heute ist nichts offen.",
+      "viewAll": "Alle Aufgaben"
+    },
+    "activity": {
+      "title": "Letzte Aktivitäten",
+      "empty": "Noch keine Aktivitäten."
+    },
+    "error": {
+      "title": "Daten konnten nicht geladen werden",
+      "retry": "Erneut versuchen"
+    }
+  },
+  "roles": {
+    "inhaber": "Inhaber",
+    "admin": "Admin",
+    "teamleiter": "Teamleiter",
+    "mitarbeiter": "Mitarbeiter"
+  },
+  "common": {
+    "loading": "Lädt …",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "close": "Schließen"
+  }
+}
