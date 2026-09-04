@@ -106,6 +106,7 @@
   --shadow-raised: 0 2px 4px color-mix(in oklch, var(--color-neutral-1000) 5%, transparent), 0 8px 24px color-mix(in oklch, var(--color-neutral-1000) 8%, transparent);
   --shadow-overlay: 0 12px 32px color-mix(in oklch, var(--color-neutral-1000) 12%, transparent), 0 2px 8px color-mix(in oklch, var(--color-neutral-1000) 6%, transparent);
   --shadow-auth-mark: 0 24px 80px color-mix(in oklch, var(--color-accent) 28%, transparent);
+  --shadow-unlock: 0 18px 56px color-mix(in oklch, var(--color-accent) 18%, transparent), 0 2px 8px color-mix(in oklch, var(--color-neutral-1000) 8%, transparent);
 }
 
 /* Bewegung: eigene Variablen (kein Tailwind-Namensraum), zurückhaltend aber
@@ -265,6 +266,18 @@ body {
   background:
     radial-gradient(circle at 50% 48%, color-mix(in oklch, var(--color-accent) 25%, transparent), transparent 32%),
     radial-gradient(circle at 92% 8%, color-mix(in oklch, var(--color-accent) 18%, transparent), transparent 24%);
+}
+
+.unlock-orbit {
+  background: conic-gradient(
+    from 25deg,
+    transparent 0deg 48deg,
+    var(--color-accent) 48deg 132deg,
+    transparent 132deg 218deg,
+    color-mix(in oklch, var(--color-accent) 42%, transparent) 218deg 292deg,
+    transparent 292deg 360deg
+  );
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black 0);
 }
 
 :focus-visible {

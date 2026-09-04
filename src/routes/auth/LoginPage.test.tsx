@@ -3,6 +3,7 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it } from "vitest";
 import { useAuthStore } from "@/store/auth";
 import { LoginPage } from "./LoginPage";
+import { UnlockSequence } from "./UnlockSequence";
 
 describe("LoginPage", () => {
   beforeEach(() => {
@@ -25,5 +26,12 @@ describe("LoginPage", () => {
     expect(html).toContain("E-Mail-Adresse");
     expect(html).toContain("Passwort vergessen?");
     expect(html).toContain("aria-label=\"Design\"");
+  });
+
+  it("renders the unlock sequence after a successful login", () => {
+    const html = renderToString(<UnlockSequence />);
+
+    expect(html).toContain("Zugang bestätigt");
+    expect(html).toContain("Arbeitsbereich entsperrt");
   });
 });

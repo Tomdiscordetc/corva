@@ -23,6 +23,9 @@
       "hidePassword": "Passwort verbergen",
       "successTitle": "Anmeldung erfolgreich",
       "successSubtitle": "Dein Arbeitsbereich wird vorbereitet …",
+      "accessConfirmed": "Zugang bestätigt",
+      "unlockTitle": "Arbeitsbereich entsperrt",
+      "unlockSubtitle": "Corva öffnet deinen Arbeitsbereich …",
       "firstLoginHint": "Beim ersten Login legst du ein eigenes Passwort fest.",
       "twoFactorPlaceholder": "Zwei-Faktor-Authentifizierung folgt in einem späteren Abschnitt.",
       "genericError": "E-Mail oder Passwort ist falsch."
