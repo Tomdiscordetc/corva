@@ -36,13 +36,27 @@
     "density": "Dichte",
     "densityComfortable": "Luftig",
     "densityCompact": "Kompakt",
+    "theme": "Design",
+    "themeSystem": "System",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
+    "shortcuts": "Tastenkürzel",
     "logout": "Abmelden"
   },
   "commandPalette": {
     "placeholder": "Befehl oder Seite suchen …",
     "empty": "Keine Treffer.",
     "groupNav": "Bereiche",
-    "groupActions": "Aktionen"
+    "groupActions": "Aktionen",
+    "styleguide": "Styleguide"
+  },
+  "shortcuts": {
+    "title": "Tastenkürzel",
+    "subtitle": "In Textfeldern deaktiviert.",
+    "openPalette": "Befehlspalette öffnen",
+    "openHelp": "Diese Übersicht öffnen",
+    "goTo": "Springen zu …",
+    "sequenceHint": "erst „g“, dann"
   },
   "dashboard": {
     "title": "Übersicht",
@@ -82,6 +96,39 @@
     "error": {
       "title": "Daten konnten nicht geladen werden",
       "retry": "Erneut versuchen"
+    }
+  },
+  "styleguide": {
+    "title": "Styleguide",
+    "subtitle": "Alle Farben, Schriftgrößen, Bewegungswerte und Bausteine an einem Ort — interne Referenz, nicht Teil der Navigation.",
+    "colors": {
+      "title": "Farben",
+      "neutral": "Neutralskala",
+      "accent": "Signalton",
+      "status": "Status"
+    },
+    "typography": {
+      "title": "Typografie",
+      "sample": "Vertriebsstand heute"
+    },
+    "motion": {
+      "title": "Bewegung",
+      "fast": "schnell (Hover, Druckzustand)",
+      "base": "normal (Menüs, Kurzmeldungen)",
+      "slow": "langsam (Dialoge)",
+      "page": "Seite (Übergänge)"
+    },
+    "components": {
+      "title": "Bausteine",
+      "buttons": "Buttons",
+      "inputs": "Eingabefelder",
+      "toggles": "Schalter & Auswahl",
+      "feedback": "Rückmeldungen",
+      "overlays": "Überlagerungen",
+      "openDialog": "Dialog öffnen",
+      "showToast": "Kurzmeldung zeigen",
+      "toastTitle": "Gespeichert",
+      "toastDescription": "Die Änderung wurde übernommen."
     }
   },
   "roles": {

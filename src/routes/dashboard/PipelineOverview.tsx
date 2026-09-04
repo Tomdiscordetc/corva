@@ -3,9 +3,9 @@ import type { PipelineStage } from "@/demo/dashboard";
 import { t } from "@/i18n";
 
 const STAGE_COLORS: Record<PipelineStage["key"], string> = {
-  new: "bg-neutral-300",
-  contacted: "bg-neutral-500",
-  consultation: "bg-neutral-700",
+  new: "bg-line-strong",
+  contacted: "bg-text-faint",
+  consultation: "bg-text-muted",
   offer: "bg-accent",
   won: "bg-positive",
 };
@@ -15,7 +15,7 @@ export function PipelineOverview({ stages }: { stages: PipelineStage[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-neutral-100">
+      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-surface-muted">
         {stages.map((stage) => (
           <motion.div
             key={stage.key}

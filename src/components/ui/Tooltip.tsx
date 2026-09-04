@@ -18,12 +18,12 @@ export function Tooltip({ content, children, side = "top" }: TooltipProps) {
           side={side}
           sideOffset={6}
           className={[
-            "z-50 rounded-sm bg-neutral-950 px-2.5 py-1.5 text-2xs font-medium text-neutral-0 shadow-[var(--shadow-raised)]",
+            "z-50 rounded-sm bg-invert px-2.5 py-1.5 text-2xs font-medium text-on-invert shadow-[var(--shadow-raised)]",
             "data-[state=delayed-open]:animate-[tooltip-in_var(--t-fast)_var(--ease-standard)]",
           ].join(" ")}
         >
           {content}
-          <RadixTooltip.Arrow className="fill-neutral-950" />
+          <RadixTooltip.Arrow className="fill-invert" />
         </RadixTooltip.Content>
       </RadixTooltip.Portal>
     </RadixTooltip.Root>

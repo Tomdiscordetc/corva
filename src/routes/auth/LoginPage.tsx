@@ -34,7 +34,7 @@ export function LoginPage() {
         className="w-full max-w-sm rounded-xl border border-line bg-[color-mix(in_oklch,var(--color-surface-raised)_88%,transparent)] p-8 shadow-[var(--shadow-raised)] backdrop-blur-xl"
       >
         <div className="mb-7 flex flex-col items-center gap-3 text-center">
-          <div className="flex size-11 items-center justify-center rounded-lg bg-neutral-950 text-neutral-0">
+          <div className="flex size-11 items-center justify-center rounded-lg bg-invert text-on-invert">
             <Logo className="size-6" />
           </div>
           <div>

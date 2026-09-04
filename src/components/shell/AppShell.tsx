@@ -2,13 +2,16 @@ import { Navigate, Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { ContextPanel } from "./ContextPanel";
 import { Topbar } from "./Topbar";
+import { ShortcutsHelpDialog } from "./ShortcutsHelpDialog";
 import { CommandPalette } from "@/components/ui/CommandPalette";
 import { useAuthStore } from "@/store/auth";
 import { useCommandPaletteShortcut } from "@/hooks/useCommandPaletteShortcut";
+import { useNavShortcuts } from "@/hooks/useNavShortcuts";
 
 export function AppShell() {
   const status = useAuthStore((s) => s.status);
   useCommandPaletteShortcut();
+  useNavShortcuts();
 
   if (status !== "signed-in") {
     return <Navigate to="/login" replace />;
@@ -25,6 +28,7 @@ export function AppShell() {
         </main>
       </div>
       <CommandPalette />
+      <ShortcutsHelpDialog />
     </div>
   );
 }

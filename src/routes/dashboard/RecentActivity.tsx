@@ -23,7 +23,7 @@ export function RecentActivity({ items }: { items: ActivityItem[] }) {
       {items.map((item) => {
         const channel = CHANNEL_CONFIG[item.channel];
         return (
-          <li key={item.id} className="flex items-start gap-3 rounded-md px-2 py-2.5 transition-colors duration-[var(--t-fast)] hover:bg-neutral-50">
+          <li key={item.id} className="flex items-start gap-3 rounded-md px-2 py-2.5 transition-colors duration-[var(--t-fast)] hover:bg-surface-subtle">
             <div className={`flex size-8 shrink-0 items-center justify-center rounded-full ${channel.tone}`}>
               <channel.icon className="size-4" />
             </div>

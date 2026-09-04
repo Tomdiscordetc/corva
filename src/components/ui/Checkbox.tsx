@@ -19,12 +19,12 @@ export function Checkbox({ checked, onCheckedChange, label, id }: CheckboxProps)
         className={cn(
           "flex size-5 items-center justify-center rounded-[6px] border border-line-strong bg-surface outline-none",
           "transition-colors duration-[var(--t-fast)] ease-[var(--ease-standard)]",
-          "data-[state=checked]:border-neutral-950 data-[state=checked]:bg-neutral-950",
+          "data-[state=checked]:border-invert data-[state=checked]:bg-invert",
           "focus-visible:ring-4 focus-visible:ring-accent-tint",
         )}
       >
         <RadixCheckbox.Indicator>
-          <Check className="size-3.5 text-neutral-0" strokeWidth={3} />
+          <Check className="size-3.5 text-on-invert" strokeWidth={3} />
         </RadixCheckbox.Indicator>
       </RadixCheckbox.Root>
       {label && (

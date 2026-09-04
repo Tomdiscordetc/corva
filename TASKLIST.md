@@ -24,16 +24,67 @@ dann weiter.
       Tablet/Desktop (1440px), keine externen Netzwerkanfragen, keine
       Konsolenfehler (frischer Tab, End-to-End-Durchlauf)
 
-**Bekannte Lücken (bewusst, siehe Plan):** kein Server, kein echtes Login,
+**Bekannte Lücken (damals bewusst offen):** kein Server, kein echtes Login,
 keine Rollenprüfung, kein Dunkelmodus, kein Englisch, keine Kanäle.
+
+## Abschnitt 1.5 — Design-Ausbau ✅ ABGESCHLOSSEN (2026-09-04)
+
+Ergebnis einer 24-Fragen-Runde mit Tom, alle „Empfohlen"-Optionen gewählt.
+Baut auf Abschnitt 1 auf, bevor Abschnitt 2 beginnt — betrifft nur
+Bestehendes (Login/Shell/Dashboard), keine neuen fachlichen Bildschirme.
+
+- [x] **Dunkelmodus** vollständig ausgeliefert (Tokens waren vorbereitet):
+      System + manueller Schalter (3-Wege: System/Hell/Dunkel), Akzentblau im
+      Dunkeln etwas heller, WCAG-AA-Kontrast
+- [x] **Gerichtete Seitenübergänge**: Vorwärts/Rückwärts in der Navigations-
+      reihenfolge rutscht sichtbar unterschiedlich (View Transitions, nur der
+      Inhaltsbereich, nicht Icon-Leiste/Kopfzeile), `prefers-reduced-motion`
+      schaltet ab
+- [x] **Tastenkürzel-Set**: „g" + Buchstabe zum Springen (d=Übersicht,
+      c=Kontakte, i=Posteingang, k=Kalender, a=Aufgaben, r=Auswertung,
+      e=Einstellungen), „?" öffnet eine Kurzübersicht; Strg+K bleibt bestehen
+- [x] **Styleguide-Seite** (`/app/styleguide`, über Strg+K erreichbar): alle
+      Farben, Typografie, Bewegungswerte und Bausteine an einem Ort
+- [x] **Dezenter Hintergrund-Lade-Indikator** in der Kopfzeile, sichtbar
+      während Daten im Hintergrund aktualisiert werden
+
+Zusätzlich dabei behoben:
+- Befehlspalette navigierte für **alle** Einträge nach `/app` statt zum
+  jeweiligen Bereich (Kopierfehler aus Abschnitt 1)
+- Bausteine nutzten feste Neutralwerte (`bg-neutral-950`, `bg-neutral-100`, …),
+  die im Dunkelmodus nicht kippen. Jetzt semantische Tokens: `invert`/
+  `on-invert` für kräftige Gegenflächen, `surface-muted`/`-hover`/`-subtle`/
+  `-press`, `skeleton`, `scrim`
+- Styleguide baute Klassennamen per Template-String zusammen
+  (`bg-${token}`) — Tailwind erzeugt solche Klassen nicht, Farbfelder wären
+  leer geblieben. Jetzt feste Zeichenketten
+
+Bekannte Kleinigkeit: bei sehr schnell aufeinanderfolgenden Seitenwechseln
+(Tastenkürzel im Sekundentakt) meldet der Browser einmalig
+`InvalidStateError: Transition was aborted` — die View-Transitions-API bricht
+den laufenden Übergang ab. Ohne Folgen für die Anzeige; bewusst nicht mit
+globalem Abfangen zugekleistert.
+
+Muster, die für Abschnitt 2 vorgemerkt sind (siehe unten, dort erstmals mit
+echten Daten/Listen sinnvoll): Drag & Drop, Rechtsklick-Kontextmenü,
+Rückgängig-Toast, optimistisches UI, Wischgesten, Live-Validierung in
+Formularen.
 
 ## Abschnitt 2 — Restliche Bildschirme gestalten (offen)
 
+Reihenfolge: **Kontakte zuerst** (Tabelle als Standardansicht, Kartenraster
+als Umschalt-Option), dann die übrigen. Am Kontakte-Bildschirm werden die in
+Abschnitt 1.5 vorgemerkten Muster erstmals angewendet: Drag & Drop
+(Pipeline-Status), Rechtsklick-Kontextmenü je Zeile, Rückgängig-Toast beim
+Löschen, optimistisches Speichern, Wischgesten auf dem Handy,
+Live-Validierung in der Kontaktakte.
+
 - [ ] Kontaktliste + Kontaktakte
-- [ ] Posteingang aller Kanäle
-- [ ] Kalender
+- [ ] Posteingang aller Kanäle (Liste + Detail nebeneinander)
+- [ ] Kalender (Standardansicht: Woche)
 - [ ] Aufgaben
-- [ ] Auswertung
+- [ ] Auswertung (Kennzahlen + wählbarer Vergleichszeitraum, Diagramme
+      interaktiv mit Hover-Tooltip)
 - [ ] Einstellungen
 - [ ] Team
 

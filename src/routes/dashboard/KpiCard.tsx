@@ -22,7 +22,7 @@ export function KpiCard({ icon: Icon, label, value, delta, format = "number" }: 
       <CardContent className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-text-muted">{label}</span>
-          <div className="flex size-8 items-center justify-center rounded-md bg-neutral-100 text-text-muted">
+          <div className="flex size-8 items-center justify-center rounded-md bg-surface-muted text-text-muted">
             <Icon className="size-4" />
           </div>
         </div>
@@ -51,11 +51,11 @@ export function KpiCardSkeleton() {
     <Card>
       <CardContent className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <div className="h-3 w-20 rounded-md bg-neutral-150 animate-pulse" />
-          <div className="size-8 rounded-md bg-neutral-150 animate-pulse" />
+          <div className="h-3 w-20 rounded-md bg-skeleton animate-pulse" />
+          <div className="size-8 rounded-md bg-skeleton animate-pulse" />
         </div>
-        <div className="h-7 w-16 rounded-md bg-neutral-150 animate-pulse" />
-        <div className="h-3 w-24 rounded-md bg-neutral-150 animate-pulse" />
+        <div className="h-7 w-16 rounded-md bg-skeleton animate-pulse" />
+        <div className="h-3 w-24 rounded-md bg-skeleton animate-pulse" />
       </CardContent>
     </Card>
   );

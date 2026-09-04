@@ -31,7 +31,7 @@ export function ContextPanel() {
           <button
             onClick={toggle}
             aria-label="Seitenbereich einklappen"
-            className="flex size-7 items-center justify-center rounded-full text-text-faint transition-colors duration-[var(--t-fast)] hover:bg-neutral-150 hover:text-text"
+            className="flex size-7 items-center justify-center rounded-full text-text-faint transition-colors duration-[var(--t-fast)] hover:bg-surface-press hover:text-text"
           >
             <PanelLeftClose className="size-4" />
           </button>
@@ -51,7 +51,7 @@ export function ContextPanel() {
                   <p className="mb-2 text-2xs font-medium text-text-faint">Team</p>
                   <ul className="space-y-1">
                     {TEAM.map((member) => (
-                      <li key={member.name} className="flex items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors duration-[var(--t-fast)] hover:bg-neutral-100">
+                      <li key={member.name} className="flex items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors duration-[var(--t-fast)] hover:bg-surface-hover">
                         <Avatar name={member.name} size="sm" />
                         <div className="min-w-0">
                           <p className="truncate text-xs font-medium text-text">{member.name}</p>
@@ -89,7 +89,7 @@ export function ContextPanelOpenButton() {
     <button
       onClick={toggle}
       aria-label="Seitenbereich einblenden"
-      className="flex size-8 items-center justify-center rounded-md text-text-faint transition-colors duration-[var(--t-fast)] hover:bg-neutral-100 hover:text-text max-md:hidden"
+      className="flex size-8 items-center justify-center rounded-md text-text-faint transition-colors duration-[var(--t-fast)] hover:bg-surface-hover hover:text-text max-md:hidden"
     >
       <PanelLeftOpen className="size-4" />
     </button>

@@ -1,8 +1,9 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { getNavItems } from "./navItems";
 import { Logo } from "./Logo";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { cn } from "@/lib/cn";
+import { markNavDirection } from "@/lib/navDirection";
 
 /**
  * Schmale Icon-Leiste (Layout-Entscheidung aus dem Plan). Auf schmalen
@@ -10,6 +11,7 @@ import { cn } from "@/lib/cn";
  */
 export function Sidebar() {
   const items = getNavItems();
+  const { pathname } = useLocation();
   return (
     <nav
       aria-label="Hauptnavigation"
@@ -29,12 +31,13 @@ export function Sidebar() {
             viewTransition
             to={item.path}
             end={item.path === "/app"}
+            onClick={() => markNavDirection(pathname, item.path)}
             className={({ isActive }) =>
               cn(
                 "flex size-11 items-center justify-center rounded-md text-text-muted",
                 "transition-colors duration-[var(--t-fast)] ease-[var(--ease-standard)]",
-                "hover:bg-neutral-100 hover:text-text",
-                isActive && "bg-neutral-950 text-neutral-0 hover:bg-neutral-950 hover:text-neutral-0",
+                "hover:bg-surface-hover hover:text-text",
+                isActive && "bg-invert text-on-invert hover:bg-invert hover:text-on-invert",
               )
             }
           >

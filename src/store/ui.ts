@@ -10,6 +10,8 @@ interface UiState {
   toggleContextPanel: () => void;
   commandPaletteOpen: boolean;
   setCommandPaletteOpen: (open: boolean) => void;
+  shortcutsHelpOpen: boolean;
+  setShortcutsHelpOpen: (open: boolean) => void;
 }
 
 /** Oberflächen-Zustand, der pro Person auf diesem Gerät erhalten bleibt. */
@@ -22,6 +24,8 @@ export const useUiStore = create<UiState>()(
       toggleContextPanel: () => set((s) => ({ contextPanelOpen: !s.contextPanelOpen })),
       commandPaletteOpen: false,
       setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
+      shortcutsHelpOpen: false,
+      setShortcutsHelpOpen: (open) => set({ shortcutsHelpOpen: open }),
     }),
     { name: "corva.ui" },
   ),

@@ -20,7 +20,7 @@ export function TodayTasks({ tasks }: { tasks: TaskItem[] }) {
       {tasks.map((task) => (
         <li
           key={task.id}
-          className="flex items-center gap-3 rounded-md px-2 py-2.5 transition-colors duration-[var(--t-fast)] hover:bg-neutral-50"
+          className="flex items-center gap-3 rounded-md px-2 py-2.5 transition-colors duration-[var(--t-fast)] hover:bg-surface-subtle"
         >
           <Checkbox
             id={`task-${task.id}`}

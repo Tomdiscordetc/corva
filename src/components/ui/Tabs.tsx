@@ -20,7 +20,7 @@ export function TabsTrigger({ value, children }: { value: string; children: Reac
         "relative -mb-px border-b-2 border-transparent py-2.5 text-sm font-medium text-text-muted outline-none",
         "transition-colors duration-[var(--t-fast)] ease-[var(--ease-standard)]",
         "hover:text-text",
-        "data-[state=active]:border-neutral-950 data-[state=active]:text-text",
+        "data-[state=active]:border-invert data-[state=active]:text-text",
         "focus-visible:rounded-sm focus-visible:ring-4 focus-visible:ring-accent-tint",
       )}
     >

@@ -1,8 +1,10 @@
 import { Command } from "cmdk";
-import { useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, Inbox, Calendar, ListTodo, BarChart3, Settings, LogOut } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { LogOut, Palette } from "lucide-react";
 import { useUiStore } from "@/store/ui";
 import { useAuthStore } from "@/store/auth";
+import { getNavItems } from "@/components/shell/navItems";
+import { markNavDirection } from "@/lib/navDirection";
 import { t } from "@/i18n";
 
 export function CommandPalette() {
@@ -10,9 +12,11 @@ export function CommandPalette() {
   const setOpen = useUiStore((s) => s.setCommandPaletteOpen);
   const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   function go(path: string) {
-    navigate(path);
+    markNavDirection(pathname, path);
+    navigate(path, { viewTransition: true });
     setOpen(false);
   }
 
@@ -21,7 +25,7 @@ export function CommandPalette() {
       open={open}
       onOpenChange={setOpen}
       label={t("commandPalette.placeholder")}
-      overlayClassName="fixed inset-0 z-50 bg-neutral-1000/40 animate-[overlay-in_var(--t-base)_var(--ease-standard)]"
+      overlayClassName="fixed inset-0 z-50 bg-scrim animate-[overlay-in_var(--t-base)_var(--ease-standard)]"
       contentClassName="fixed top-[18vh] left-1/2 z-50 w-[min(560px,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-lg border border-line bg-surface-raised shadow-[var(--shadow-overlay)] animate-[dialog-in_var(--t-base)_var(--ease-standard)]"
     >
       <Command.Input
@@ -33,29 +37,16 @@ export function CommandPalette() {
           {t("commandPalette.empty")}
         </Command.Empty>
         <Command.Group heading={t("commandPalette.groupNav")} className="[&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-2xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-text-faint">
-          <Item icon={<LayoutDashboard className="size-4" />} onSelect={() => go("/app")}>
-            {t("nav.dashboard")}
-          </Item>
-          <Item icon={<Users className="size-4" />} onSelect={() => go("/app")}>
-            {t("nav.contacts")}
-          </Item>
-          <Item icon={<Inbox className="size-4" />} onSelect={() => go("/app")}>
-            {t("nav.inbox")}
-          </Item>
-          <Item icon={<Calendar className="size-4" />} onSelect={() => go("/app")}>
-            {t("nav.calendar")}
-          </Item>
-          <Item icon={<ListTodo className="size-4" />} onSelect={() => go("/app")}>
-            {t("nav.tasks")}
-          </Item>
-          <Item icon={<BarChart3 className="size-4" />} onSelect={() => go("/app")}>
-            {t("nav.reports")}
-          </Item>
-          <Item icon={<Settings className="size-4" />} onSelect={() => go("/app")}>
-            {t("nav.settings")}
-          </Item>
+          {getNavItems().map((item) => (
+            <Item key={item.path} icon={<item.icon className="size-4" />} onSelect={() => go(item.path)}>
+              {item.label}
+            </Item>
+          ))}
         </Command.Group>
         <Command.Group heading={t("commandPalette.groupActions")} className="[&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-2xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-text-faint">
+          <Item icon={<Palette className="size-4" />} onSelect={() => go("/app/styleguide")}>
+            {t("commandPalette.styleguide")}
+          </Item>
           <Item icon={<LogOut className="size-4" />} onSelect={() => { logout(); setOpen(false); }}>
             {t("topbar.logout")}
           </Item>
@@ -69,7 +60,7 @@ function Item({ icon, children, onSelect }: { icon: React.ReactNode; children: R
   return (
     <Command.Item
       onSelect={onSelect}
-      className="flex cursor-pointer items-center gap-2.5 rounded-[8px] px-2.5 py-2.5 text-sm text-text data-[selected=true]:bg-neutral-100"
+      className="flex cursor-pointer items-center gap-2.5 rounded-[8px] px-2.5 py-2.5 text-sm text-text data-[selected=true]:bg-surface-hover"
     >
       <span className="text-text-faint">{icon}</span>
       {children}

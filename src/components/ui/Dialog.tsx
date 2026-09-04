@@ -21,7 +21,7 @@ export function DialogContent({
     <RadixDialog.Portal>
       <RadixDialog.Overlay
         className={cn(
-          "fixed inset-0 z-50 bg-neutral-1000/40",
+          "fixed inset-0 z-50 bg-scrim",
           "data-[state=open]:animate-[overlay-in_var(--t-base)_var(--ease-standard)]",
         )}
       />
@@ -45,7 +45,7 @@ export function DialogContent({
           <RadixDialog.Close asChild>
             <button
               aria-label="Schließen"
-              className="flex size-7 shrink-0 items-center justify-center rounded-full text-text-faint transition-colors duration-[var(--t-fast)] hover:bg-neutral-100 hover:text-text"
+              className="flex size-7 shrink-0 items-center justify-center rounded-full text-text-faint transition-colors duration-[var(--t-fast)] hover:bg-surface-hover hover:text-text"
             >
               <X className="size-4" />
             </button>

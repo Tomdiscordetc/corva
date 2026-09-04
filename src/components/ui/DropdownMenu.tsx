@@ -46,7 +46,7 @@ export function DropdownMenuItem({
       onSelect={onSelect}
       className={cn(
         "flex cursor-pointer items-center gap-2 rounded-[8px] px-2.5 py-2 text-sm outline-none select-none",
-        "data-[highlighted]:bg-neutral-100",
+        "data-[highlighted]:bg-surface-hover",
         destructive ? "text-danger" : "text-text",
       )}
     >
@@ -78,7 +78,7 @@ export function DropdownMenuCheckboxItem({
       onCheckedChange={onCheckedChange}
       className={cn(
         "flex cursor-pointer items-center gap-2 rounded-[8px] px-2.5 py-2 text-sm text-text outline-none select-none",
-        "data-[highlighted]:bg-neutral-100",
+        "data-[highlighted]:bg-surface-hover",
       )}
     >
       <span className="flex size-3.5 items-center justify-center">

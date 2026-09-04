@@ -8,7 +8,7 @@ interface StatusPillProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const toneClasses: Record<Tone, string> = {
-  neutral: "bg-neutral-100 text-neutral-700",
+  neutral: "bg-surface-muted text-text-muted",
   accent: "bg-accent-tint text-accent-text",
   positive: "bg-positive-tint text-positive",
   warning: "bg-warning-tint text-warning",
