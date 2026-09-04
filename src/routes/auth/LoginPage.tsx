@@ -21,6 +21,7 @@ import { toast } from "@/components/ui/Toast";
 import { cn } from "@/lib/cn";
 import { AuthVisual } from "./AuthVisual";
 import { UnlockSequence, UNLOCK_DURATION_MS } from "./UnlockSequence";
+import { VerificationSequence } from "./VerificationSequence";
 import { t } from "@/i18n";
 
 const THEME_OPTIONS: { value: ThemeChoice; Icon: typeof Monitor; labelKey: string }[] = [
@@ -90,10 +91,14 @@ export function LoginPage() {
     <main className="relative min-h-dvh overflow-hidden bg-surface-sunken">
       <div aria-hidden className="auth-page-glow pointer-events-none absolute inset-0" />
 
-      <div
+      <motion.div
+        initial={false}
+        animate={{ opacity: authFlowActive ? 0 : 1, y: authFlowActive ? -8 : 0 }}
+        transition={{ duration: reduceMotion ? 0 : 0.38 }}
         className="absolute top-4 right-4 z-20 flex rounded-md border border-line bg-surface-overlay p-1 shadow-[var(--shadow-soft)] backdrop-blur-md"
         role="group"
         aria-label={t("topbar.theme")}
+        style={{ pointerEvents: authFlowActive ? "none" : "auto" }}
       >
         {THEME_OPTIONS.map(({ value, Icon, labelKey }) => (
           <button
@@ -108,7 +113,7 @@ export function LoginPage() {
             <Icon className="size-3.5" />
           </button>
         ))}
-      </div>
+      </motion.div>
 
       <div className="relative mx-auto min-h-dvh w-full">
         <motion.div
@@ -154,13 +159,20 @@ export function LoginPage() {
             transition={{ duration: reduceMotion ? 0 : 1.25, ease: [0.32, 0.72, 0, 1] }}
           />
           <motion.div variants={panel} initial="hidden" animate="show" className="w-full max-w-md">
-            <motion.div variants={row} className="mb-10 lg:hidden">
+            <motion.div
+              variants={row}
+              animate={{ opacity: authFlowActive ? 0 : 1, y: authFlowActive ? -8 : 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.38 }}
+              className="mb-10 lg:hidden"
+            >
               <LogoLockup className="text-text" />
             </motion.div>
 
             <AnimatePresence mode="wait" initial={false}>
               {status === "signed-in" ? (
                 <UnlockSequence key="success" />
+              ) : status === "authenticating" ? (
+                <VerificationSequence key="verification" />
               ) : (
                 <motion.div
                   key="form"
@@ -180,7 +192,6 @@ export function LoginPage() {
                     noValidate
                     animate={error && !reduceMotion ? { x: [0, -5, 4, -2, 0] } : { x: 0 }}
                     transition={{ duration: 0.3 }}
-                    aria-busy={status === "authenticating"}
                   >
                     <Input
                       label={t("auth.login.email")}
@@ -193,7 +204,6 @@ export function LoginPage() {
                       onChange={(event) => updateEmail(event.target.value)}
                       trailing={<Mail className="size-4" />}
                       invalid={!!error}
-                      disabled={status === "authenticating"}
                       required
                     />
                     <Input
@@ -204,7 +214,6 @@ export function LoginPage() {
                       value={password}
                       onChange={(event) => updatePassword(event.target.value)}
                       invalid={!!error}
-                      disabled={status === "authenticating"}
                       required
                       trailing={
                         <button
@@ -248,11 +257,9 @@ export function LoginPage() {
                       </button>
                     </div>
 
-                    <Button type="submit" size="lg" className="group w-full" loading={status === "authenticating"}>
-                      <span>{status === "authenticating" ? t("auth.login.submitting") : t("auth.login.submit")}</span>
-                      {status !== "authenticating" && (
-                        <ArrowRight className="size-4 transition-transform duration-[var(--t-fast)] group-hover:translate-x-0.5" />
-                      )}
+                    <Button type="submit" size="lg" className="group w-full">
+                      <span>{t("auth.login.submit")}</span>
+                      <ArrowRight className="size-4 transition-transform duration-[var(--t-fast)] group-hover:translate-x-0.5" />
                     </Button>
                   </motion.form>
 

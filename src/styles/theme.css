@@ -274,6 +274,24 @@ body {
   background: radial-gradient(circle at center, color-mix(in oklch, var(--color-accent) 10%, transparent), transparent 34%);
 }
 
+.verification-orbit {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 38deg,
+    var(--color-accent) 38deg 82deg,
+    transparent 82deg 174deg,
+    color-mix(in oklch, var(--color-accent) 35%, transparent) 174deg 228deg,
+    transparent 228deg 318deg,
+    var(--color-accent) 318deg 346deg,
+    transparent 346deg 360deg
+  );
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), black 0);
+}
+
+.verification-scan {
+  background: linear-gradient(to bottom, transparent, color-mix(in oklch, var(--color-accent) 24%, transparent), transparent);
+}
+
 .unlock-orbit {
   background: conic-gradient(
     from 25deg,

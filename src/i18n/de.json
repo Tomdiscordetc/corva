@@ -26,6 +26,9 @@
       "accessConfirmed": "Zugang bestätigt",
       "unlockTitle": "Arbeitsbereich entsperrt",
       "unlockSubtitle": "Corva öffnet deinen Arbeitsbereich …",
+      "verificationEyebrow": "Firmenkonto",
+      "verificationTitle": "Zugang wird geprüft",
+      "verificationSubtitle": "Anmeldedaten werden abgeglichen …",
       "firstLoginHint": "Beim ersten Login legst du ein eigenes Passwort fest.",
       "twoFactorPlaceholder": "Zwei-Faktor-Authentifizierung folgt in einem späteren Abschnitt.",
       "genericError": "E-Mail oder Passwort ist falsch."

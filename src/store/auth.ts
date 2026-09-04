@@ -41,7 +41,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   error: null,
   async login(email, password) {
     set({ status: "authenticating", error: null });
-    await new Promise((r) => setTimeout(r, 700));
+    await new Promise((r) => setTimeout(r, 1500));
     if (!email.includes("@") || password.length < 4) {
       set({ status: "signed-out", error: "E-Mail oder Passwort ist falsch." });
       return;

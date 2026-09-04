@@ -20,7 +20,7 @@ describe("auth store", () => {
     const login = useAuthStore.getState().login("not-an-email", "123");
     expect(useAuthStore.getState().status).toBe("authenticating");
 
-    await vi.advanceTimersByTimeAsync(700);
+    await vi.advanceTimersByTimeAsync(1500);
     await login;
 
     expect(useAuthStore.getState().status).toBe("signed-out");
@@ -32,7 +32,7 @@ describe("auth store", () => {
 
   it("signs valid demo credentials in", async () => {
     const login = useAuthStore.getState().login("tom.beispiel@firma.de", "demo-passwort");
-    await vi.advanceTimersByTimeAsync(700);
+    await vi.advanceTimersByTimeAsync(1500);
     await login;
 
     const state = useAuthStore.getState();

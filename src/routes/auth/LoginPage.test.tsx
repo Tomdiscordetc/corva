@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { useAuthStore } from "@/store/auth";
 import { LoginPage } from "./LoginPage";
 import { UnlockSequence } from "./UnlockSequence";
+import { VerificationSequence } from "./VerificationSequence";
 
 describe("LoginPage", () => {
   beforeEach(() => {
@@ -33,5 +34,12 @@ describe("LoginPage", () => {
 
     expect(html).toContain("Zugang bestätigt");
     expect(html).toContain("Arbeitsbereich entsperrt");
+  });
+
+  it("renders the credential verification phase", () => {
+    const html = renderToString(<VerificationSequence />);
+
+    expect(html).toContain("Zugang wird geprüft");
+    expect(html).toContain("Anmeldedaten werden abgeglichen");
   });
 });
