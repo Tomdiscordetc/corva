@@ -22,9 +22,15 @@ export function useSettings(email: string) {
     }
   });
 
-  function save(action: () => void) {
+  function save(action: () => void, expected?: { key: string; field: string; value: string | boolean }) {
     try {
       action();
+      // Zustand kann bei bereits beim Start gesperrtem Speicher still auf
+      // flüchtigen Zustand zurückfallen. Erfolg erst nach tatsächlichem Lesen.
+      if (expected) {
+        const persisted = JSON.parse(window.localStorage.getItem(expected.key) ?? "null");
+        if (persisted?.state?.[expected.field] !== expected.value) throw new Error("Preference was not persisted");
+      }
       setFeedback("saved");
     } catch {
       setFeedback("error");
@@ -41,10 +47,10 @@ export function useSettings(email: string) {
 
   return {
     theme, density, contextPanelOpen, notifications, feedback,
-    changeTheme: (value: ThemeChoice) => save(() => setTheme(value)),
-    changeDensity: (value: Density) => save(() => setDensity(value)),
+    changeTheme: (value: ThemeChoice) => save(() => setTheme(value), { key: "corva.theme", field: "theme", value }),
+    changeDensity: (value: Density) => save(() => setDensity(value), { key: "corva.ui", field: "density", value }),
     changeContextPanel: (value: boolean) => {
-      if (value !== contextPanelOpen) save(toggleContextPanel);
+      if (value !== contextPanelOpen) save(toggleContextPanel, { key: "corva.ui", field: "contextPanelOpen", value });
     },
     changeNotification,
     showShortcuts: () => showShortcuts(true),

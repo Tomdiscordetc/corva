@@ -5,6 +5,7 @@ import { useUiStore } from "@/store/ui";
 import { Avatar } from "@/components/ui/Avatar";
 import { getNavItems } from "./navItems";
 import { t } from "@/i18n";
+import { SettingsNavigation } from "@/routes/settings/SettingsNavigation";
 
 const TEAM = [
   { name: "Sabine Krüger", status: "aktiv" },
@@ -21,6 +22,8 @@ export function ContextPanel() {
 
   return (
     <motion.aside
+      inert={!open}
+      aria-hidden={!open}
       animate={{ width: open ? 264 : 0 }}
       transition={{ duration: 0.22, ease: [0.32, 0.72, 0, 1] }}
       className="shrink-0 overflow-hidden border-r border-line bg-surface-sunken max-md:hidden"
@@ -38,7 +41,9 @@ export function ContextPanel() {
         </div>
         <div className="flex-1 overflow-y-auto px-4 pb-4">
           <AnimatePresence mode="wait">
-            {pathname === "/app" ? (
+            {pathname.startsWith("/app/settings") ? (
+              <div key="settings"><SettingsNavigation inContextPanel /></div>
+            ) : pathname === "/app" ? (
               <motion.div
                 key="dashboard"
                 initial={{ opacity: 0 }}
