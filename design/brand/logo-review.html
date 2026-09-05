@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Corva — Wing / Logoentwurf</title>
+  <style>
+    @font-face { font-family: Inter; src: url('../../src/assets/fonts/inter-latin-wght-normal.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+    :root { --ink: #06070a; --paper: #fff; --soft: #f4f5f7; --line: #e0e3e8; --muted: #68707c; --blue: #2f80fc; }
+    * { box-sizing: border-box; } body { margin:0; background:var(--soft); color:var(--ink); font-family:Inter,system-ui,sans-serif; }
+    main { max-width:1200px; margin:auto; padding:40px; } header { display:flex; gap:24px; justify-content:space-between; align-items:center; padding-bottom:28px; border-bottom:1px solid var(--line); }
+    .eyebrow { font-size:11px; letter-spacing:.15em; font-weight:600; color:var(--muted); text-transform:uppercase; } header p { margin:0; } .tag { border:1px solid var(--line); border-radius:100px; padding:8px 12px; font-size:11px; color:var(--muted); }
+    .hero { min-height:350px; display:flex; align-items:center; justify-content:center; gap:24px; } .hero img { width:112px; height:112px; } .word { font-size:88px; letter-spacing:-.065em; font-weight:600; line-height:1; margin-top:-9px; }
+    .grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; } .card { border:1px solid var(--line); border-radius:18px; overflow:hidden; background:var(--paper); } .sample { height:196px; display:flex; align-items:center; justify-content:center; gap:24px; } .sample img { width:86px; height:86px; }
+    .dark { background:var(--ink); } .dark img, .blue img { filter:invert(1); } .blue { background:var(--blue); } .caption { border-top:1px solid var(--line); padding:14px 18px; font-size:11px; color:var(--muted); }
+    .sizes { display:flex; justify-content:space-between; align-items:center; padding:32px 0; border-bottom:1px solid var(--line); gap:24px; } .sizes div { display:flex; align-items:center; gap:28px; } .sizes img { display:block; }
+    footer { display:flex; gap:48px; justify-content:space-between; padding:28px 0; } h1 { margin:0 0 10px; font-size:19px; letter-spacing:-.03em; font-weight:600; } footer p { max-width:520px; margin:0; color:var(--muted); font-size:13px; line-height:1.8; } a { color:var(--ink); font-size:12px; text-underline-offset:5px; white-space:nowrap; }
+    @media(max-width:650px) { main { padding:24px; } .hero { min-height:250px; gap:16px; } .hero img { width:70px; height:70px; } .word { font-size:58px; } .grid { grid-template-columns:1fr; } .sample { height:160px; } footer,.sizes { align-items:flex-start; flex-direction:column; gap:20px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">Corva · Identität</p><span class="tag">Eigener SVG-Entwurf / 01</span></header>
+    <div class="hero" aria-label="Corva Wort-Bild-Marke"><img src="corva-mark.svg" alt="Corva-Flügelsignet"><span class="word">corva</span></div>
+    <div class="grid">
+      <div class="card"><div class="sample"><img src="corva-mark.svg" alt="Schwarzes Signet auf Weiß"></div><div class="caption">01 / Klar auf hellen Flächen</div></div>
+      <div class="card"><div class="sample dark"><img src="corva-mark.svg" alt="Helles Signet auf Dunkel"></div><div class="caption">02 / Kontrast im Dunkelmodus</div></div>
+      <div class="card"><div class="sample blue"><img src="corva-mark.svg" alt="Helles Signet auf Signalblau"></div><div class="caption">03 / Signalblau als Anwendungsfläche</div></div>
+    </div>
+    <div class="sizes"><span class="eyebrow">Eine Form. Jede Größe.</span><div><img src="corva-mark.svg" width="16" height="16" alt="16 Pixel"><img src="corva-mark.svg" width="24" height="24" alt="24 Pixel"><img src="corva-mark.svg" width="32" height="32" alt="32 Pixel"><img src="corva-mark.svg" width="48" height="48" alt="48 Pixel"></div></div>
+    <footer><div><h1>Wing — ruhig, präzise, eigenständig.</h1><p>Zwei kompakte Flächen bilden eine aufsteigende Flügelform mit einem V im Zwischenraum. Das Motiv greift den Klang von Corva auf und bleibt auch als kleines App-Signet klar erkennbar. Die Wortmarke setzt auf die vorhandene lokale Inter.</p></div><a href="corva-mark.svg" download>SVG herunterladen ↗</a></footer>
+  </main>
+</body>
+</html>

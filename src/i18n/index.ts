@@ -1,6 +1,8 @@
 import de from "./de.json";
+import settings from "./settings.de.json";
 
-type Dict = typeof de;
+const dictionary = { ...de, settings };
+type Dict = typeof dictionary;
 
 /** Holt einen verschachtelten Wert per Punktpfad, z. B. "auth.login.title". */
 function resolve(dict: Dict, path: string): unknown {
@@ -19,7 +21,7 @@ function resolve(dict: Dict, path: string): unknown {
  * bleiben dabei unverändert.
  */
 export function t(path: string, vars?: Record<string, string | number>): string {
-  const value = resolve(de, path);
+  const value = resolve(dictionary, path);
   if (typeof value !== "string") {
     if (import.meta.env.DEV) {
       console.warn(`[i18n] fehlender Text für "${path}"`);
