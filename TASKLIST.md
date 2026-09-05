@@ -70,6 +70,23 @@ echten Daten/Listen sinnvoll): Drag & Drop, Rechtsklick-Kontextmenü,
 Rückgängig-Toast, optimistisches UI, Wischgesten, Live-Validierung in
 Formularen.
 
+## Abschnitt 1.6 — Login-Prozess ✅ ABGESCHLOSSEN (2026-09-05)
+
+Die Optik des Logins stand, der Ablauf war aber einstufig: E-Mail + Passwort,
+fertig. Drei im Text versprochene Dinge fehlten ganz.
+
+- [x] **Mehrstufiger Ablauf** mit gerichtetem Schiebe-Übergang zwischen den
+      Schritten: E-Mail → Passwort → ggf. Bestätigungscode
+- [x] **Zwei-Faktor-Schritt**: sechsstelliger Code, Feldwechsel automatisch,
+      Einfügen aus der Zwischenablage, erneut senden mit Wartezeit,
+      „diesem Gerät vertrauen"
+- [x] **Erstes Passwort festlegen** (war im Hinweistext versprochen):
+      Stärkeanzeige, Wiederholung, Regeln sichtbar
+- [x] **Passwort vergessen** als echter Zweig statt Kurzmeldung
+- [x] **Angemeldet bleiben** + Sitzung übersteht das Neuladen
+- [x] **Feststelltasten-Warnung** im Passwortfeld
+- [x] Tests für Store-Ablauf und die neuen Schritte
+
 ## Abschnitt 2 — Restliche Bildschirme gestalten (offen)
 
 Reihenfolge: **Kontakte zuerst** (Tabelle als Standardansicht, Kartenraster
