@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
@@ -38,16 +38,24 @@ export function LoginPage() {
   const direction = useAuthStore((s) => s.direction);
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
-  const [continueToApp, setContinueToApp] = useState(false);
+  const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const authFlowActive = status !== "signed-out";
   const StepView = STEP_VIEWS[step];
 
+  /*
+    Der Wechsel läuft bewusst über navigate() statt <Navigate>: nur so lässt
+    sich die View-Transition auslösen, die das Signet aus der Entsperr-Sequenz
+    an seinen Platz in der Icon-Leiste wandern lässt (siehe .corva-mark-morph).
+  */
   useEffect(() => {
     if (status !== "signed-in") return;
-    const timer = window.setTimeout(() => setContinueToApp(true), reduceMotion ? 120 : UNLOCK_DURATION_MS);
+    const timer = window.setTimeout(
+      () => navigate("/app", { replace: true, viewTransition: true }),
+      reduceMotion ? 120 : UNLOCK_DURATION_MS,
+    );
     return () => window.clearTimeout(timer);
-  }, [reduceMotion, status]);
+  }, [navigate, reduceMotion, status]);
 
   const panel: Variants = {
     hidden: reduceMotion ? {} : { opacity: 0, y: 14 },
@@ -66,10 +74,6 @@ export function LoginPage() {
     hidden: reduceMotion ? {} : { opacity: 0, y: 7 },
     show: { opacity: 1, y: 0, transition: { duration: 0.48, ease: [0.32, 0.72, 0, 1] } },
   };
-
-  if (continueToApp) {
-    return <Navigate to="/app" replace />;
-  }
 
   return (
     <main className="relative min-h-dvh overflow-hidden bg-surface-sunken">
@@ -118,9 +122,9 @@ export function LoginPage() {
               <p className="mb-4 text-2xs font-semibold tracking-widest text-on-auth-brand/55 uppercase">
                 {t("auth.login.eyebrow")}
               </p>
-              <h1 className="max-w-lg text-2xl font-semibold tracking-tight text-on-auth-brand">
+              <p className="max-w-lg text-2xl font-semibold tracking-tight text-on-auth-brand">
                 {t("app.tagline")}
-              </h1>
+              </p>
               <AuthVisual />
             </div>
 
@@ -188,6 +192,34 @@ export function LoginPage() {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/*
+              Pflichtangaben nach § 5 DDG und Art. 13 DSGVO müssen von der
+              ersten Seite aus erreichbar sein. Während der Anmeldung treten
+              sie zurück, damit sie die Choreografie nicht stören.
+            */}
+            <motion.nav
+              aria-label={t("legal.footerLabel")}
+              initial={false}
+              animate={{ opacity: authFlowActive ? 0 : 1 }}
+              transition={{ duration: reduceMotion ? 0 : 0.38 }}
+              style={{ pointerEvents: authFlowActive ? "none" : "auto" }}
+              className="mt-10 flex items-center justify-center gap-4 text-2xs text-text-faint"
+            >
+              <Link
+                to="/impressum"
+                className="rounded-sm transition-colors duration-[var(--t-fast)] hover:text-text-muted"
+              >
+                {t("legal.imprintLink")}
+              </Link>
+              <span aria-hidden>·</span>
+              <Link
+                to="/datenschutz"
+                className="rounded-sm transition-colors duration-[var(--t-fast)] hover:text-text-muted"
+              >
+                {t("legal.privacyLink")}
+              </Link>
+            </motion.nav>
           </motion.div>
         </section>
       </div>

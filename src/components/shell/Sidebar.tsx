@@ -23,7 +23,7 @@ export function Sidebar() {
       )}
     >
       <div className="mb-4 flex items-center justify-center text-text max-lg:hidden">
-        <Logo />
+        <Logo className="corva-mark-morph" />
       </div>
       {items.map((item) => {
         // Radix' Trigger (asChild) fügt className als String zusammen — eine

@@ -326,8 +326,34 @@ body {
   ruhig stehen bleiben. Die Richtung setzt useDirectionalNav() als Attribut
   auf <html>, bevor navigiert wird (siehe src/lib/navDirection.ts).
 */
-main {
+/*
+  Nur der Inhaltsbereich der App trägt den Namen — die Anmeldeseite ist selbst
+  ein <main> über die volle Fläche und würde sonst beim Wechsel ins Dashboard
+  auf den kleineren Bereich zusammengestaucht.
+*/
+.app-main {
   view-transition-name: main-content;
+}
+
+/*
+  Das Signet trägt beim Wechsel von der Anmeldung ins Dashboard denselben
+  Namen wie das Zeichen in der Icon-Leiste: der Browser bewegt es von der
+  Bildmitte an seinen Platz, statt hart umzuschalten. Es ist immer nur eines
+  davon gleichzeitig im Dokument.
+*/
+.corva-mark-morph {
+  view-transition-name: corva-mark;
+}
+
+::view-transition-old(corva-mark),
+::view-transition-new(corva-mark) {
+  animation-duration: 620ms;
+  animation-timing-function: var(--ease-standard);
+}
+
+::view-transition-group(corva-mark) {
+  animation-duration: 620ms;
+  animation-timing-function: var(--ease-standard);
 }
 
 ::view-transition-old(main-content),
