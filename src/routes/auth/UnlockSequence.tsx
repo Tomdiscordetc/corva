@@ -39,7 +39,7 @@ export function UnlockSequence() {
           animate={{ y: 0, scale: [0.88, 1, 1, 1.04] }}
           transition={{ duration: reduceMotion ? 0 : 2.35, times: [0, 0.2, 0.78, 1], ease: [0.32, 0.72, 0, 1] }}
         >
-          <Logo className="relative z-0 size-11 text-text" />
+          <Logo className="corva-mark-morph relative z-0 size-11 text-text" />
 
           <motion.span
             className="unlock-scan absolute inset-y-0 z-30 w-8"
@@ -128,14 +128,14 @@ export function UnlockSequence() {
       >
         {t("auth.login.accessConfirmed")}
       </motion.p>
-      <motion.h2
+      <motion.h1
         initial={reduceMotion ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reduceMotion ? 0 : 0.48, delay: reduceMotion ? 0 : 1.68 }}
         className="mt-3 text-xl font-semibold tracking-tight text-text"
       >
         {t("auth.login.unlockTitle")}
-      </motion.h2>
+      </motion.h1>
       <motion.p
         initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}

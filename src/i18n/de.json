@@ -48,7 +48,7 @@
       "trustDevice": "Diesem Gerät vertrauen",
       "trustDeviceHint": "Dann entfällt der Code auf diesem Gerät künftig.",
       "resendCode": "Code erneut senden",
-      "resendCodeIn": "Erneut senden in {{seconds}} s",
+      "resendCodeIn": "Erneut senden in {{seconds}} s",
       "codeResent": "Ein neuer Code ist unterwegs.",
       "verifyCode": "Code bestätigen",
       "setPasswordEyebrow": "Erste Anmeldung",
@@ -200,5 +200,36 @@
     "cancel": "Abbrechen",
     "save": "Speichern",
     "close": "Schließen"
+  },
+  "legal": {
+    "back": "Zurück zur Anmeldung",
+    "imprintLink": "Impressum",
+    "privacyLink": "Datenschutz",
+    "placeholderNotice": "Diese Angaben sind noch nicht ausgefüllt. Vor dem Verkaufsstart müssen sie vollständig eingetragen werden — ohne sie ist der Betrieb in Deutschland nicht zulässig.",
+    "imprint": {
+      "title": "Impressum",
+      "providerHeading": "Anbieter (§ 5 DDG)",
+      "provider": "Firmenname, Rechtsform\nStraße und Hausnummer\nPLZ und Ort",
+      "contactHeading": "Kontakt",
+      "contact": "Telefon\nE-Mail-Adresse",
+      "registerHeading": "Register und Umsatzsteuer",
+      "register": "Registergericht und Registernummer\nUmsatzsteuer-Identifikationsnummer nach § 27 a UStG",
+      "responsibleHeading": "Verantwortlich für den Inhalt",
+      "responsible": "Vor- und Nachname, Anschrift"
+    },
+    "privacy": {
+      "title": "Datenschutzerklärung",
+      "controllerHeading": "Verantwortlicher (Art. 4 Nr. 7 DSGVO)",
+      "controller": "Name und Anschrift des Verantwortlichen\nKontaktdaten der oder des Datenschutzbeauftragten, falls benannt",
+      "purposeHeading": "Zweck und Rechtsgrundlage der Verarbeitung",
+      "purpose": "Beim Anmelden werden E-Mail-Adresse und Zeitpunkt verarbeitet, um den Zugang zu prüfen und abzusichern. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) sowie lit. f (berechtigtes Interesse an sicherem Betrieb).",
+      "storageHeading": "Speicherdauer",
+      "storage": "Angaben zur Aufbewahrungsdauer und zu Löschfristen ergänzen.",
+      "rightsHeading": "Ihre Rechte",
+      "rights": "Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch nach Art. 15 bis 21 DSGVO sowie Beschwerderecht bei einer Aufsichtsbehörde.",
+      "hostingHeading": "Hosting und Auftragsverarbeitung",
+      "hosting": "Angaben zum Hosting und zu Auftragsverarbeitern nach Art. 28 DSGVO ergänzen. Schriften und Symbole werden aus der Anwendung selbst geladen — es entstehen keine Verbindungen zu Drittanbietern."
+    },
+    "footerLabel": "Rechtliche Hinweise"
   }
 }

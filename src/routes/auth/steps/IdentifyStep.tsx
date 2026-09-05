@@ -29,6 +29,7 @@ export function IdentifyStep() {
         title={t("auth.login.title")}
         subtitle={t("auth.login.emailStepSubtitle")}
         onSubmit={onSubmit}
+        busy={busy}
         error={error}
         footer={
           <p className="text-center text-2xs text-text-faint">{t("auth.login.firstLoginHint")}</p>

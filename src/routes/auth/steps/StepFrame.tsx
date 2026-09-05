@@ -10,6 +10,8 @@ interface StepFrameProps {
   children: ReactNode;
   onSubmit: (event: FormEvent) => void;
   error?: string | null;
+  /** Läuft gerade eine Prüfung? Setzt aria-busy auf dem Formular. */
+  busy?: boolean;
   /** Zeigt links oben eine Zurück-Schaltfläche. */
   onBack?: () => void;
   backLabel?: string;
@@ -27,6 +29,7 @@ export function StepFrame({
   children,
   onSubmit,
   error,
+  busy = false,
   onBack,
   backLabel,
   footer,
@@ -47,13 +50,24 @@ export function StepFrame({
       )}
 
       <p className="mb-3 text-xs font-semibold text-accent-text">{eyebrow}</p>
-      <h2 className="text-2xl font-semibold tracking-tight text-text">{title}</h2>
+      <h1 className="text-2xl font-semibold tracking-tight text-text">{title}</h1>
       <div className="mt-2 max-w-sm text-sm text-text-muted">{subtitle}</div>
+
+      {/*
+        Beim Schrittwechsel bleibt der Fokus im Eingabefeld — ein Sprung auf
+        die Überschrift wäre für Tastaturnutzer umständlich. Damit
+        Screenreader den Wechsel trotzdem mitbekommen, wird der neue Schritt
+        einmal angesagt.
+      */}
+      <p className="sr-only" role="status">
+        {title}
+      </p>
 
       <motion.form
         onSubmit={onSubmit}
         className="mt-8 space-y-5"
         noValidate
+        aria-busy={busy}
         animate={error && !reduceMotion ? { x: [0, -5, 4, -2, 0] } : { x: 0 }}
         transition={{ duration: 0.3 }}
       >

@@ -6,6 +6,7 @@ import { AppShell } from "./components/shell/AppShell";
 import { DashboardPage } from "./routes/dashboard/DashboardPage";
 import { StyleguidePage } from "./routes/styleguide/StyleguidePage";
 import { SettingsPage } from "./routes/settings/SettingsPage";
+import { ImprintPage, PrivacyPage } from "./routes/legal/LegalPage";
 import { ComingSoonPage } from "./routes/ComingSoonPage";
 import { t } from "./i18n";
 
@@ -13,6 +14,8 @@ export const router = createBrowserRouter([
   { path: "/", element: <RootRedirect /> },
   { path: "/splash", element: <SplashScreen /> },
   { path: "/login", element: <LoginPage /> },
+  { path: "/impressum", element: <ImprintPage /> },
+  { path: "/datenschutz", element: <PrivacyPage /> },
   {
     path: "/app",
     element: <AppShell />,

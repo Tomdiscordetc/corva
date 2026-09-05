@@ -42,6 +42,7 @@ export function PasswordStep() {
         title={t("auth.login.passwordStepTitle")}
         subtitle={t("auth.login.passwordStepSubtitle")}
         onSubmit={onSubmit}
+        busy={busy}
         error={error}
         onBack={back}
         backLabel={t("auth.login.changeEmail")}

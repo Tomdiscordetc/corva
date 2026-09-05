@@ -36,6 +36,7 @@ export function SetPasswordStep() {
       title={t("auth.login.setPasswordTitle")}
       subtitle={t("auth.login.setPasswordSubtitle")}
       onSubmit={onSubmit}
+      busy={busy}
       error={localError}
     >
       <Input

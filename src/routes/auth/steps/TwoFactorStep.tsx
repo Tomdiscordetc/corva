@@ -39,6 +39,7 @@ export function TwoFactorStep() {
       title={t("auth.login.twoFactorTitle")}
       subtitle={t("auth.login.twoFactorSubtitle", { email })}
       onSubmit={onSubmit}
+      busy={busy}
       error={error}
       onBack={back}
       footer={

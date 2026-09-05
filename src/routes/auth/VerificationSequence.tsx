@@ -47,7 +47,7 @@ export function VerificationSequence() {
       </div>
 
       <p className="text-xs font-semibold text-accent-text">{t("auth.login.verificationEyebrow")}</p>
-      <h2 className="mt-3 text-xl font-semibold tracking-tight text-text">{t("auth.login.verificationTitle")}</h2>
+      <h1 className="mt-3 text-xl font-semibold tracking-tight text-text">{t("auth.login.verificationTitle")}</h1>
       <p className="mt-2 text-sm text-text-muted">{t("auth.login.verificationSubtitle")}</p>
 
       <div className="mt-7 flex items-center gap-2" aria-hidden>

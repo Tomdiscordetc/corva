@@ -28,6 +28,7 @@ export function RecoverStep() {
       title={t("auth.login.recoverTitle")}
       subtitle={t("auth.login.recoverSubtitle")}
       onSubmit={onSubmit}
+      busy={busy}
       error={error}
       onBack={() => goToStep("identify")}
       backLabel={t("auth.login.backToLogin")}
@@ -83,7 +84,7 @@ export function RecoverSentStep() {
         ))}
       </motion.div>
 
-      <h2 className="text-xl font-semibold tracking-tight text-text">{t("auth.login.recoverSentTitle")}</h2>
+      <h1 className="text-xl font-semibold tracking-tight text-text">{t("auth.login.recoverSentTitle")}</h1>
       <p className="mx-auto mt-2 max-w-sm text-sm text-text-muted">
         {t("auth.login.recoverSentSubtitle", { email })}
       </p>
