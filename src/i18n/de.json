@@ -231,5 +231,93 @@
       "hosting": "Angaben zum Hosting und zu Auftragsverarbeitern nach Art. 28 DSGVO ergänzen. Schriften und Symbole werden aus der Anwendung selbst geladen — es entstehen keine Verbindungen zu Drittanbietern."
     },
     "footerLabel": "Rechtliche Hinweise"
+  },
+  "tasks": {
+    "title": "Aufgaben",
+    "subtitle": "Wiedervorlagen, Rückrufe und Termine deines Teams.",
+    "demoNotice": "Beispielaufgaben — noch nicht mit dem Server verbunden",
+    "localHint": "Aufgaben liegen bis zum Server-Abschnitt nur auf diesem Gerät.",
+    "new": "Neue Aufgabe",
+    "search": "Aufgaben durchsuchen …",
+    "scope": {
+      "offen": "Offen",
+      "heute": "Heute",
+      "ueberfaellig": "Überfällig",
+      "erledigt": "Erledigt",
+      "alle": "Alle"
+    },
+    "sort": {
+      "label": "Sortierung",
+      "faelligkeit": "Nach Fälligkeit",
+      "prioritaet": "Nach Priorität",
+      "angelegt": "Zuletzt angelegt"
+    },
+    "assignee": {
+      "label": "Zuständig",
+      "alle": "Ganzes Team"
+    },
+    "priority": {
+      "label": "Priorität",
+      "hoch": "Hoch",
+      "mittel": "Mittel",
+      "niedrig": "Niedrig"
+    },
+    "field": {
+      "title": "Titel",
+      "titlePlaceholder": "Was ist zu tun?",
+      "notes": "Notiz",
+      "notesPlaceholder": "Optionale Details",
+      "dueDate": "Fällig am",
+      "dueTime": "Uhrzeit",
+      "contact": "Kontakt",
+      "contactPlaceholder": "Name des Kontakts"
+    },
+    "validation": {
+      "titleRequired": "Bitte gib der Aufgabe einen Titel.",
+      "titleTooLong": "Höchstens 120 Zeichen.",
+      "dateInvalid": "Bitte gib ein gültiges Datum an.",
+      "timeNeedsDate": "Für eine Uhrzeit wird auch ein Datum gebraucht."
+    },
+    "dialog": {
+      "createTitle": "Neue Aufgabe",
+      "createDescription": "Lege eine Wiedervorlage oder einen Rückruf an.",
+      "editTitle": "Aufgabe bearbeiten",
+      "editDescription": "Änderungen werden sofort übernommen.",
+      "create": "Aufgabe anlegen",
+      "save": "Änderungen speichern"
+    },
+    "row": {
+      "toggleDone": "Als erledigt markieren",
+      "toggleOpen": "Wieder öffnen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "actions": "Aktionen zur Aufgabe",
+      "overdue": "Überfällig",
+      "today": "Heute",
+      "noDueDate": "Ohne Termin",
+      "swipeHint": "Zum Löschen nach links ziehen"
+    },
+    "empty": {
+      "offen": "Nichts offen — alles abgearbeitet.",
+      "heute": "Für heute steht nichts an.",
+      "ueberfaellig": "Nichts überfällig.",
+      "erledigt": "Noch nichts erledigt.",
+      "alle": "Noch keine Aufgaben angelegt.",
+      "search": "Keine Aufgabe passt zur Suche.",
+      "action": "Erste Aufgabe anlegen"
+    },
+    "toast": {
+      "created": "Aufgabe angelegt",
+      "updated": "Aufgabe gespeichert",
+      "done": "Aufgabe erledigt",
+      "reopened": "Aufgabe wieder geöffnet",
+      "deleted": "Aufgabe gelöscht",
+      "undo": "Rückgängig",
+      "restored": "Aufgabe wiederhergestellt"
+    },
+    "count": {
+      "one": "1 Aufgabe",
+      "many": "{{count}} Aufgaben"
+    }
   }
 }

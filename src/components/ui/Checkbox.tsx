@@ -7,13 +7,17 @@ interface CheckboxProps {
   onCheckedChange: (checked: boolean) => void;
   label?: string;
   id?: string;
+  /** Beschriftung für Fälle ohne sichtbares Label, etwa in Listenzeilen. */
+  "aria-label"?: string;
+  className?: string;
 }
 
-export function Checkbox({ checked, onCheckedChange, label, id }: CheckboxProps) {
+export function Checkbox({ checked, onCheckedChange, label, id, className, ...props }: CheckboxProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div className={cn("flex items-center gap-2", className)}>
       <RadixCheckbox.Root
         id={id}
+        aria-label={props["aria-label"]}
         checked={checked}
         onCheckedChange={(v) => onCheckedChange(v === true)}
         className={cn(

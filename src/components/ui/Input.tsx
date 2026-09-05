@@ -4,6 +4,8 @@ import { cn } from "@/lib/cn";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  /** Blendet die Beschriftung optisch aus, lässt sie aber vorlesbar. */
+  hideLabel?: boolean;
   error?: string;
   /** Markiert das Feld als fehlerhaft, ohne eine eigene Meldung darunter zu
    *  setzen — für Formulare mit einer gemeinsamen Meldung über mehrere Felder. */
@@ -13,7 +15,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { className, label, error, invalid, hint, trailing, id, ...props },
+  { className, label, hideLabel = false, error, invalid, hint, trailing, id, ...props },
   ref,
 ) {
   const generatedId = useId();
@@ -24,7 +26,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={inputId} className="text-xs font-medium text-text-muted">
+        <label htmlFor={inputId} className={cn("text-xs font-medium text-text-muted", hideLabel && "sr-only")}>
           {label}
         </label>
       )}

@@ -3,10 +3,18 @@ import { installLocalStorageStub } from "@/test/localStorageStub";
 
 installLocalStorageStub();
 
-const { useAuthStore, DEMO_TWO_FACTOR_CODE, DEMO_INITIAL_PASSWORD } = await import("./auth");
+/*
+  Bewusst gegen den Demo-Store statt gegen `useAuthStore`: der wechselt seit
+  dem Server-Umbau je nach VITE_AUTH_MODE auf die Server-Anmeldung, die im
+  Test keinen erreichbaren Server hat. Geprüft wird hier der Demo-Ablauf.
+*/
+const { createDemoAuthStore, DEMO_TWO_FACTOR_CODE, DEMO_INITIAL_PASSWORD } = await import("./demoAuth");
+
+let useAuthStore = createDemoAuthStore();
 
 function reset() {
   localStorage.clear();
+  useAuthStore = createDemoAuthStore();
   useAuthStore.setState({
     status: "signed-out",
     step: "identify",
