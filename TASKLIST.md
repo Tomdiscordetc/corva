@@ -96,14 +96,21 @@ Abschnitt 1.5 vorgemerkten Muster erstmals angewendet: Drag & Drop
 Löschen, optimistisches Speichern, Wischgesten auf dem Handy,
 Live-Validierung in der Kontaktakte.
 
-- [ ] Kontaktliste + Kontaktakte
+- [ ] **Kontaktliste + Kontaktakte — als Nächstes**
 - [ ] Posteingang aller Kanäle (Liste + Detail nebeneinander)
 - [ ] Kalender (Standardansicht: Woche)
-- [ ] Aufgaben
+- [x] Aufgaben (2026-09-05): anlegen, bearbeiten, abhaken, löschen mit
+      Rückgängig, Bereiche mit Zählern, Suche, Filter, Sortierung,
+      Rechtsklick-Menü, Wischgeste; Bestand im lokalen Speicher
 - [ ] Auswertung (Kennzahlen + wählbarer Vergleichszeitraum, Diagramme
       interaktiv mit Hover-Tooltip)
-- [ ] Einstellungen
-- [ ] Team
+- [x] Einstellungen (2026-09-04/05): Erscheinungsbild, Benachrichtigungen,
+      Konto; im Server-Modus gegen echte Endpunkte
+- [ ] Team (noch ohne Route)
+
+Noch offen aus der Musterliste, weil Kontakte sie erstmals braucht:
+Drag & Drop für den Pipeline-Status und optimistisches Speichern gegen den
+Server.
 
 ## Abschnitt 3 — Server-Fundament (offen)
 
