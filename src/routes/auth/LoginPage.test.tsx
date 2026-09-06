@@ -14,8 +14,7 @@ installLocalStorageStub();
 vi.stubEnv("VITE_AUTH_MODE", "demo");
 
 const { LoginPage } = await import("./LoginPage");
-const { UnlockSequence } = await import("./UnlockSequence");
-const { VerificationSequence } = await import("./VerificationSequence");
+const { AuthVisual, AUTH_SEQUENCE_MS, GRANTED_STEPS } = await import("./AuthVisual");
 const { IdentifyStep } = await import("./steps/IdentifyStep");
 const { PasswordStep } = await import("./steps/PasswordStep");
 const { TwoFactorStep } = await import("./steps/TwoFactorStep");
@@ -88,8 +87,26 @@ describe("Anmeldeseite", () => {
     expect(sent).toContain("Zurück zur Anmeldung");
   });
 
-  it("rendert die Prüf- und Entsperrphase", () => {
-    expect(renderToString(<VerificationSequence />)).toContain("Zugang wird geprüft");
-    expect(renderToString(<UnlockSequence />)).toContain("Arbeitsbereich entsperrt");
+  it("wartet mit dem Dashboard, bis die Kette durchgelaufen ist", () => {
+    // Sonst wird mitten im Aufbrechen weggeschaltet und die Sequenz bricht ab.
+    const letzterSchritt = Math.max(...Object.values(GRANTED_STEPS));
+    expect(AUTH_SEQUENCE_MS).toBeGreaterThan(letzterSchritt);
+  });
+
+  it("führt die Kette in der richtigen Reihenfolge", () => {
+    // Grün vor Schloss, Schloss vor Bügel, Bügel vor Bruch, Bruch vor Auflösen.
+    const { lines, lock, shackle, burst, clear } = GRANTED_STEPS;
+    expect(lines).toBeLessThan(lock);
+    expect(lock).toBeLessThan(shackle);
+    expect(shackle).toBeLessThan(burst);
+    expect(burst).toBeLessThan(clear);
+  });
+
+  it("beschriftet das Markenfeld je nach Stand der Anmeldung", () => {
+    // Rot heißt „noch nicht verbunden" — die Beschriftung darf das nicht als
+    // Fehler ausgeben, sonst liest ein Screenreader jede Anmeldung als Panne.
+    expect(render(<AuthVisual />)).toContain("Verbindung steht noch nicht");
+    expect(render(<AuthVisual phase="checking" />)).toContain("Verbindung wird geprüft");
+    expect(render(<AuthVisual phase="granted" />)).toContain("Zugang bestätigt");
   });
 });

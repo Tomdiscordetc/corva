@@ -78,6 +78,11 @@
   --color-auth-brand: var(--color-neutral-950);
   --color-on-auth-brand: var(--color-neutral-0);
 
+  /* Anmeldung: Rot heißt „noch nicht verbunden", nicht Fehler — deshalb
+     eigene Tokens und nicht die Status-Farben der Oberfläche. */
+  --color-auth-pending: oklch(68% 0.19 25);
+  --color-auth-granted: oklch(74% 0.15 148);
+
   /* Kräftige Gegenfläche (Primärbutton, aktiver Menüpunkt, Kurzinfo, Schalter).
      Im Hellmodus fast schwarz auf hell, im Dunkelmodus fast weiß auf dunkel —
      deshalb ein eigenes Token statt fest "neutral-950". */

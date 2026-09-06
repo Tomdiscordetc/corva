@@ -74,7 +74,16 @@
       "recoverSentTitle": "Prüfe dein Postfach",
       "recoverSentSubtitle": "Falls ein Konto zu {{email}} gehört, ist der Link unterwegs. Er gilt 30 Minuten.",
       "recoverSentDemoHint": "Demo: Es wird noch nichts verschickt — der Versand kommt mit dem Server-Abschnitt.",
-      "backToLogin": "Zurück zur Anmeldung"
+      "backToLogin": "Zurück zur Anmeldung",
+      "statusIdle": "Kanäle werden angebunden",
+      "statusChecking": "Verbindung wird geprüft …",
+      "statusGranted": "Zugang bestätigt",
+      "statusUnlocking": "Arbeitsbereich wird entsperrt"
+    },
+    "visual": {
+      "idle": "Kanäle angebunden, Verbindung steht noch nicht",
+      "checking": "Verbindung wird geprüft",
+      "granted": "Zugang bestätigt, Arbeitsbereich wird entsperrt"
     }
   },
   "nav": {

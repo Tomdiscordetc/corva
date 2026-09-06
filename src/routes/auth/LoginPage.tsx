@@ -7,9 +7,7 @@ import { ServerSession } from "@/components/system/ServerSession";
 import { useThemeStore, type ThemeChoice } from "@/store/theme";
 import { LogoLockup } from "@/components/shell/Logo";
 import { cn } from "@/lib/cn";
-import { AuthVisual } from "./AuthVisual";
-import { UnlockSequence, UNLOCK_DURATION_MS } from "./UnlockSequence";
-import { VerificationSequence } from "./VerificationSequence";
+import { AuthVisual, AUTH_SEQUENCE_MS, type AuthPhase } from "./AuthVisual";
 import { IdentifyStep } from "./steps/IdentifyStep";
 import { PasswordStep } from "./steps/PasswordStep";
 import { TwoFactorStep } from "./steps/TwoFactorStep";
@@ -48,6 +46,8 @@ export function LoginPage() {
   const reduceMotion = useReducedMotion();
   const authFlowActive = status !== "signed-out";
   const StepView = STEP_VIEWS[step];
+  const visualPhase: AuthPhase =
+    status === "signed-in" ? "granted" : status === "authenticating" ? "checking" : "idle";
 
   useEffect(() => {
     if (!resetToken) return;
@@ -70,7 +70,7 @@ export function LoginPage() {
     }
     const timer = window.setTimeout(
       () => navigate("/app", { replace: true, viewTransition: true }),
-      reduceMotion ? 120 : UNLOCK_DURATION_MS,
+      reduceMotion ? 120 : AUTH_SEQUENCE_MS,
     );
     return () => window.clearTimeout(timer);
   }, [navigate, reduceMotion, status, freshLogin, checked, resetToken]);
@@ -124,13 +124,21 @@ export function LoginPage() {
       </motion.div>
 
       <div className="relative mx-auto min-h-dvh w-full">
+        {/*
+          Während der Anmeldung wird das Markenfeld zur Bühne: es bleibt
+          stehen, wächst auf die volle Breite und spielt die Kette ab. Auf
+          schmalen Bildschirmen gibt es sonst kein Panel — dort tritt es für
+          die Dauer der Anmeldung an die Stelle des Formulars.
+        */}
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, x: -18 }}
-          animate={authFlowActive
-            ? { opacity: 0, x: "-108%", scale: 0.97, filter: "blur(8px)" }
-            : { opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
-          transition={{ duration: reduceMotion ? 0 : 1.2, ease: [0.32, 0.72, 0, 1] }}
-          className="absolute inset-y-0 left-0 hidden w-1/2 p-3 lg:block"
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: reduceMotion ? 0 : 0.9, ease: [0.32, 0.72, 0, 1] }}
+          className={cn(
+            "absolute inset-y-0 left-0 p-3",
+            "transition-[width] duration-[var(--t-auth-swipe)] ease-[var(--ease-standard)]",
+            authFlowActive ? "z-10 w-full" : "hidden w-1/2 lg:block",
+          )}
         >
           <section className="relative flex size-full min-h-0 flex-col overflow-hidden rounded-xl bg-auth-brand p-10 text-on-auth-brand">
             <div aria-hidden className="auth-brand-grid pointer-events-none absolute inset-0 opacity-35" />
@@ -139,24 +147,49 @@ export function LoginPage() {
             <LogoLockup className="relative z-10 text-on-auth-brand" markClassName="text-on-auth-brand" />
 
             <div className="relative z-10 my-auto flex flex-col items-center py-8 text-center">
-              <p className="mb-4 text-2xs font-semibold tracking-widest text-on-auth-brand/55 uppercase">
-                {t("auth.login.eyebrow")}
-              </p>
-              <p className="max-w-lg text-2xl font-semibold tracking-tight text-on-auth-brand">
-                {t("app.tagline")}
-              </p>
-              <AuthVisual />
+              <motion.div
+                animate={{ opacity: authFlowActive ? 0 : 1, y: authFlowActive ? -6 : 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.4 }}
+              >
+                <p className="mb-4 text-2xs font-semibold tracking-widest text-on-auth-brand/55 uppercase">
+                  {t("auth.login.eyebrow")}
+                </p>
+                <p className="max-w-lg text-2xl font-semibold tracking-tight text-on-auth-brand">
+                  {t("app.tagline")}
+                </p>
+              </motion.div>
+              <AuthVisual phase={visualPhase} />
             </div>
 
-            <p className="relative z-10 text-xs text-on-auth-brand/45">{t("auth.login.channels")}</p>
+            <p
+              role="status"
+              className="relative z-10 flex items-center gap-2 text-xs text-on-auth-brand/55"
+            >
+              {authFlowActive && (
+                <span
+                  aria-hidden
+                  className="size-1.5 rounded-full"
+                  style={{
+                    background:
+                      visualPhase === "granted"
+                        ? "var(--color-auth-granted)"
+                        : "var(--color-auth-pending)",
+                  }}
+                />
+              )}
+              {authFlowActive
+                ? t(visualPhase === "granted" ? "auth.login.statusGranted" : "auth.login.statusChecking")
+                : t("auth.login.channels")}
+            </p>
           </section>
         </motion.div>
 
         <section
+          aria-hidden={authFlowActive}
           className={cn(
             "relative ml-auto flex min-h-dvh w-full items-center justify-center px-5 py-20",
-            "transition-[width] duration-[var(--t-auth-swipe)] ease-[var(--ease-standard)] sm:px-10 lg:py-10",
-            authFlowActive ? "lg:w-full" : "lg:w-1/2",
+            "transition-opacity duration-[var(--t-slow)] ease-[var(--ease-standard)] sm:px-10 lg:py-10 lg:w-1/2",
+            authFlowActive && "pointer-events-none opacity-0",
           )}
         >
           <motion.div
@@ -183,11 +216,7 @@ export function LoginPage() {
               hängen blieb und der nächste Schritt nie erschien.
             */}
             <AnimatePresence mode="wait" initial={false}>
-              {status === "signed-in" ? (
-                <UnlockSequence key="success" />
-              ) : status === "authenticating" ? (
-                <VerificationSequence key="verification" />
-              ) : (
+              {authFlowActive ? null : (
                 <motion.div
                   key={step}
                   initial={reduceMotion ? false : { opacity: 0, x: direction > 0 ? 34 : -34, filter: "blur(4px)" }}
