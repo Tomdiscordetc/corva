@@ -12,7 +12,9 @@
     "moduleDetection": "force",
     "noEmit": true,
     "strict": true,
-    "types": []
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "vite.config.ts"
