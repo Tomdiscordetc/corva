@@ -445,6 +445,44 @@
       "undo": "Rückgängig",
       "restored": "Kontakt wiederhergestellt",
       "moved": "Auf „{{stage}}“ gesetzt"
+    },
+    "pipeline": {
+      "empty": "Keine Kontakte auf dieser Stufe",
+      "dragHint": "Karte ziehen oder mit Leertaste aufnehmen und mit den Pfeiltasten verschieben.",
+      "grab": "{{name}} verschieben",
+      "announceStart": "{{name}} aufgenommen, aktuell auf Stufe {{stage}}.",
+      "announceOver": "{{name}} über Stufe {{stage}}.",
+      "announceDrop": "{{name}} auf Stufe {{stage}} abgelegt.",
+      "announceCancel": "Verschieben abgebrochen, {{name}} bleibt auf {{stage}}."
+    },
+    "detail": {
+      "back": "Zurück zur Liste",
+      "notFound": "Diesen Kontakt gibt es nicht (mehr).",
+      "masterData": "Stammdaten",
+      "channels": "Kanäle",
+      "history": "Verlauf",
+      "historyEmpty": "Noch kein Verlauf aufgezeichnet.",
+      "tasks": "Verknüpfte Aufgaben",
+      "tasksEmpty": "Keine offenen Aufgaben zu diesem Kontakt.",
+      "newTask": "Aufgabe anlegen",
+      "logCall": "Anruf festhalten",
+      "logNote": "Notiz festhalten",
+      "write": "Schreiben",
+      "call": "Anrufen",
+      "noChannel": "Kein Kontaktweg hinterlegt.",
+      "createdAt": "Angelegt am {{date}}",
+      "source": "Kam über {{channel}}",
+      "logDialogTitle": "Kontakt festhalten",
+      "logDialogDescription": "Was wurde besprochen? Der Eintrag landet im Verlauf.",
+      "logChannel": "Weg",
+      "logDirection": "Richtung",
+      "logIncoming": "Eingehend",
+      "logOutgoing": "Ausgehend",
+      "logDescription": "Was ist passiert?",
+      "logDescriptionPlaceholder": "z. B. Bedarf aufgenommen, Rückruf für Freitag vereinbart",
+      "logSave": "Im Verlauf festhalten",
+      "logSaved": "Im Verlauf festgehalten",
+      "logRequired": "Bitte beschreibe kurz, was passiert ist."
     }
   }
 }

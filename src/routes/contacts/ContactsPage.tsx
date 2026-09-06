@@ -23,9 +23,10 @@ import { DEFAULT_CONTACT_FILTER, type ContactSort } from "@/lib/contactFilters";
 import { ContactTable } from "./ContactTable";
 import { ContactCards } from "./ContactCards";
 import { ContactDialog } from "./ContactDialog";
+import { ContactPipeline } from "./ContactPipeline";
 import { t } from "@/i18n";
 
-type ViewMode = "table" | "cards";
+type ViewMode = "table" | "cards" | "pipeline";
 const SORTS: ContactSort[] = ["zuletzt", "name", "angelegt", "stufe"];
 
 export function ContactsPage() {
@@ -168,6 +169,7 @@ export function ContactsPage() {
           options={[
             { value: "table", label: t("contacts.view.table") },
             { value: "cards", label: t("contacts.view.cards") },
+            { value: "pipeline", label: t("contacts.view.pipeline") },
           ]}
         />
       </div>
@@ -176,7 +178,13 @@ export function ContactsPage() {
         {t("contacts.count", { count: contacts.visible.length, total: contacts.contacts.length })}
       </p>
 
-      {contacts.visible.length === 0 ? (
+      {view === "pipeline" ? (
+        <ContactPipeline
+          contacts={contacts.visible}
+          onMove={handleMove}
+          onOpen={(contact) => navigate(`/app/contacts/${contact.id}`)}
+        />
+      ) : contacts.visible.length === 0 ? (
         <EmptyState
           icon={<Users className="size-5" />}
           title={filterActive ? t("contacts.empty.filtered") : t("contacts.empty.all")}

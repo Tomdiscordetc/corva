@@ -8,6 +8,7 @@ import { StyleguidePage } from "./routes/styleguide/StyleguidePage";
 import { SettingsPage } from "./routes/settings/SettingsPage";
 import { TasksPage } from "./routes/tasks/TasksPage";
 import { ContactsPage } from "./routes/contacts/ContactsPage";
+import { ContactDetailPage } from "./routes/contacts/ContactDetailPage";
 import { ImprintPage, PrivacyPage } from "./routes/legal/LegalPage";
 import { ComingSoonPage } from "./routes/ComingSoonPage";
 import { t } from "./i18n";
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <DashboardPage /> },
       { path: "contacts", element: <ContactsPage /> },
+      { path: "contacts/:contactId", element: <ContactDetailPage /> },
       { path: "inbox", element: <ComingSoonPage title={t("nav.inbox")} /> },
       { path: "calendar", element: <ComingSoonPage title={t("nav.calendar")} /> },
       { path: "tasks", element: <TasksPage /> },
