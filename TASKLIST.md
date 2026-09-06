@@ -96,8 +96,12 @@ Abschnitt 1.5 vorgemerkten Muster erstmals angewendet: Drag & Drop
 Löschen, optimistisches Speichern, Wischgesten auf dem Handy,
 Live-Validierung in der Kontaktakte.
 
-- [ ] **Kontaktliste + Kontaktakte — als Nächstes**
-- [ ] Posteingang aller Kanäle (Liste + Detail nebeneinander)
+- [x] Kontaktliste + Kontaktakte (2026-09-06): Tabelle/Karten/Pipeline,
+      Stufen-Schnellfilter mit Zählern, Suche, Filter nach Sparte und
+      Zuständigkeit, vier Sortierungen; Akte mit Kanälen, Verlauf und
+      verknüpften Aufgaben; Ziehen zwischen den Stufen (dnd-kit, mit
+      Tastaturbedienung)
+- [ ] **Posteingang aller Kanäle (Liste + Detail nebeneinander) — als Nächstes**
 - [ ] Kalender (Standardansicht: Woche)
 - [x] Aufgaben (2026-09-05): anlegen, bearbeiten, abhaken, löschen mit
       Rückgängig, Bereiche mit Zählern, Suche, Filter, Sortierung,
@@ -108,9 +112,8 @@ Live-Validierung in der Kontaktakte.
       Konto; im Server-Modus gegen echte Endpunkte
 - [ ] Team (noch ohne Route)
 
-Noch offen aus der Musterliste, weil Kontakte sie erstmals braucht:
-Drag & Drop für den Pipeline-Status und optimistisches Speichern gegen den
-Server.
+Offen aus der Musterliste bleibt nur noch das optimistische Speichern gegen
+den echten Server — lokal ist jede Änderung ohnehin sofort da.
 
 ## Abschnitt 3 — Server-Fundament (offen)
 
