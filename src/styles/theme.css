@@ -518,3 +518,24 @@ html[data-nav-direction="backward"]::view-transition-new(main-content) { animati
     animation: none;
   }
 }
+
+/*
+  Grün läuft beim bestätigten Zugang wie leuchtende Flüssigkeit von den
+  Kanälen zur Mitte: ein heller Tropfen wandert den Pfad entlang, die grüne
+  Spur zieht hinterher (siehe AuthVisual).
+*/
+.auth-flow-drop {
+  offset-rotate: 0deg;
+  animation: auth-flow 900ms var(--ease-standard) forwards;
+}
+
+@keyframes auth-flow {
+  from { offset-distance: 0%; opacity: 0; }
+  12%  { opacity: 1; }
+  85%  { opacity: 1; }
+  to   { offset-distance: 100%; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-flow-drop { animation: none; opacity: 0; }
+}
