@@ -47,6 +47,12 @@
   --color-danger: oklch(58% 0.21 25);
   --color-danger-tint: oklch(94% 0.06 25);
 
+  /* Anwesenheit: eigene Namen, damit sich „Fehler-Rot" und „im Gespräch"
+     unabhängig voneinander nachjustieren lassen. */
+  --color-presence-free: oklch(66% 0.17 148);
+  --color-presence-busy: oklch(60% 0.21 25);
+  --color-presence-away: oklch(76% 0.16 78);
+
   /* Semantische Oberflächen- und Textfarben — Werte hier sind der Hellmodus.
      Dunkelmodus überschreibt dieselben Namen weiter unten. */
   --color-surface: var(--color-neutral-0);
@@ -175,6 +181,10 @@
     --color-danger: oklch(70% 0.18 25);
     --color-danger-tint: oklch(28% 0.06 25);
 
+    --color-presence-free: oklch(74% 0.17 148);
+    --color-presence-busy: oklch(70% 0.19 25);
+    --color-presence-away: oklch(81% 0.15 78);
+
     --shadow-soft: 0 1px 2px color-mix(in oklch, black 40%, transparent), 0 2px 8px color-mix(in oklch, black 30%, transparent);
     --shadow-raised: 0 2px 4px color-mix(in oklch, black 45%, transparent), 0 8px 24px color-mix(in oklch, black 40%, transparent);
     --shadow-overlay: 0 12px 32px color-mix(in oklch, black 55%, transparent), 0 2px 8px color-mix(in oklch, black 35%, transparent);
@@ -218,6 +228,10 @@
   --color-warning-tint: oklch(28% 0.05 78);
   --color-danger: oklch(70% 0.18 25);
   --color-danger-tint: oklch(28% 0.06 25);
+
+  --color-presence-free: oklch(74% 0.17 148);
+  --color-presence-busy: oklch(70% 0.19 25);
+  --color-presence-away: oklch(81% 0.15 78);
 
   --shadow-soft: 0 1px 2px color-mix(in oklch, black 40%, transparent), 0 2px 8px color-mix(in oklch, black 30%, transparent);
   --shadow-raised: 0 2px 4px color-mix(in oklch, black 45%, transparent), 0 8px 24px color-mix(in oklch, black 40%, transparent);
@@ -403,4 +417,36 @@ html[data-nav-direction="backward"]::view-transition-new(main-content) { animati
 @keyframes skeleton-shimmer {
   from { background-position: 200% 0; }
   to { background-position: -200% 0; }
+}
+
+/*
+  Anwesenheitspunkt: der Schein liegt als weicher Ring um den Kern, damit der
+  Punkt auf hellem wie dunklem Grund „an" wirkt. „Frei" atmet leicht, die
+  anderen Stufen stehen still — Bewegung soll nicht zum Stören einladen.
+*/
+.presence-glow-free {
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-presence-free) 22%, transparent),
+    0 0 8px color-mix(in oklch, var(--color-presence-free) 65%, transparent);
+  animation: presence-breathe 2.8s var(--ease-standard) infinite;
+}
+
+.presence-glow-busy {
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-presence-busy) 22%, transparent),
+    0 0 8px color-mix(in oklch, var(--color-presence-busy) 60%, transparent);
+}
+
+.presence-glow-away {
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-presence-away) 24%, transparent),
+    0 0 7px color-mix(in oklch, var(--color-presence-away) 55%, transparent);
+}
+
+@keyframes presence-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .presence-glow-free {
+    animation: none;
+  }
 }

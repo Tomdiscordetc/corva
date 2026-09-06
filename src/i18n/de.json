@@ -319,5 +319,15 @@
       "one": "1 Aufgabe",
       "many": "{{count}} Aufgaben"
     }
+  },
+  "presence": {
+    "frei": "Frei und ansprechbar",
+    "beschaeftigt": "Im Gespräch — bitte nicht stören",
+    "abwesend": "Abwesend oder wenig Zeit",
+    "shortFrei": "Frei",
+    "shortBeschaeftigt": "Im Gespräch",
+    "shortAbwesend": "Abwesend",
+    "label": "Mein Status",
+    "teamHeading": "Team"
   }
 }

@@ -5,6 +5,9 @@ import { useUiStore, type Density } from "@/store/ui";
 import { useAuthStore, ROLE_LABELS, type Role } from "@/store/auth";
 import { useThemeStore, type ThemeChoice } from "@/store/theme";
 import { Avatar } from "@/components/ui/Avatar";
+import { PresenceAvatar, PresenceDot } from "@/components/ui/PresenceDot";
+import { PRESENCE_ORDER } from "@/lib/presence";
+import { usePresenceStore } from "@/store/presence";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import {
   DropdownMenu,
@@ -16,6 +19,9 @@ import {
 } from "@/components/ui/DropdownMenu";
 import { ContextPanelOpenButton } from "./ContextPanel";
 import { t } from "@/i18n";
+import { SERVER_MODE } from "@/lib/api";
+import { useSettings } from "@/hooks/useSettings";
+import { ServerNotificationsMenu } from "./ServerNotificationsMenu";
 
 const PREVIEW_ROLES: Role[] = ["admin", "teamleiter", "mitarbeiter"];
 const THEME_OPTIONS: { value: ThemeChoice; icon: typeof Monitor; labelKey: string }[] = [
@@ -29,12 +35,15 @@ export function Topbar() {
   const density = useUiStore((s) => s.density);
   const setDensity = useUiStore((s) => s.setDensity);
   const user = useAuthStore((s) => s.user);
+  const settings = useSettings(user?.email ?? "");
   const previewRole = useAuthStore((s) => s.previewRole);
   const setPreviewRole = useAuthStore((s) => s.setPreviewRole);
   const logout = useAuthStore((s) => s.logout);
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
   const isFetching = useIsFetching() > 0;
+  const presence = usePresenceStore((s) => s.status);
+  const setPresence = usePresenceStore((s) => s.setStatus);
 
   if (!user) return null;
 
@@ -68,7 +77,8 @@ export function Topbar() {
         <SegmentedControl
           aria-label={t("topbar.density")}
           value={density}
-          onChange={(v: Density) => setDensity(v)}
+          onChange={(v: Density) => { if (SERVER_MODE) void settings.changeDensity(v); else setDensity(v); }}
+          disabled={settings.busy || settings.loading || !!settings.loadError}
           className="max-md:hidden"
           options={[
             { value: "comfortable", label: t("topbar.densityComfortable") },
@@ -76,7 +86,7 @@ export function Topbar() {
           ]}
         />
 
-        <DropdownMenu>
+        {SERVER_MODE ? <ServerNotificationsMenu /> : <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               aria-label={t("topbar.notifications")}
@@ -92,12 +102,14 @@ export function Topbar() {
             <DropdownMenuItem>Termin in 30 Minuten: Mehmet Aydın</DropdownMenuItem>
             <DropdownMenuItem>Angebot von Kevin Brandt noch offen</DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu>}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-2 rounded-md py-1 pr-2 pl-1 transition-colors duration-[var(--t-fast)] hover:bg-surface-hover">
-              <Avatar name={user.name} size="sm" />
+              <PresenceAvatar status={presence}>
+                <Avatar name={user.name} size="sm" />
+              </PresenceAvatar>
               <span className="max-w-32 truncate text-sm font-medium text-text max-md:hidden">
                 {user.name}
               </span>
@@ -106,7 +118,16 @@ export function Topbar() {
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>{ROLE_LABELS[user.role]} · {user.email}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuLabel>
+            <DropdownMenuLabel>{t("presence.label")}</DropdownMenuLabel>
+            {PRESENCE_ORDER.map((status) => (
+              <DropdownMenuItem key={status} onSelect={() => setPresence(status)}>
+                <PresenceDot status={status} />
+                {t(`presence.short${status[0]!.toUpperCase()}${status.slice(1)}`)}
+                {presence === status ? " ✓" : ""}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            {!SERVER_MODE && <><DropdownMenuLabel>
               <span className="inline-flex items-center gap-1.5">
                 <Eye className="size-3" /> {t("topbar.viewAs")}
               </span>
@@ -120,10 +141,11 @@ export function Topbar() {
                 {ROLE_LABELS[role]}
               </DropdownMenuItem>
             ))}
+            </>}
             <DropdownMenuSeparator />
             <DropdownMenuLabel>{t("topbar.theme")}</DropdownMenuLabel>
             {THEME_OPTIONS.map((opt) => (
-              <DropdownMenuItem key={opt.value} onSelect={() => setTheme(opt.value)}>
+              <DropdownMenuItem key={opt.value} disabled={settings.busy || settings.loading || !!settings.loadError} onSelect={() => { if (SERVER_MODE) void settings.changeTheme(opt.value); else setTheme(opt.value); }}>
                 <opt.icon className="size-3.5" />
                 {t(opt.labelKey)}
                 {theme === opt.value ? " ✓" : ""}

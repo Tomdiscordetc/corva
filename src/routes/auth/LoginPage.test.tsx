@@ -1,9 +1,17 @@
 import { renderToString } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { installLocalStorageStub } from "@/test/localStorageStub";
 
 installLocalStorageStub();
+
+/*
+  Geprüft wird die Demo-Fassung der Anmeldung. Im Server-Modus — seit dem
+  Server-Umbau der Standard — zeigt die Seite stattdessen den Ladezustand der
+  Sitzungsprüfung, und einzelne Schritte tauschen ihre Texte gegen die des
+  Servers. Der Modus wird deshalb vor dem Laden der Module festgelegt.
+*/
+vi.stubEnv("VITE_AUTH_MODE", "demo");
 
 const { LoginPage } = await import("./LoginPage");
 const { UnlockSequence } = await import("./UnlockSequence");
