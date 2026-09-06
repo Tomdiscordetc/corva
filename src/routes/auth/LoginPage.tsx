@@ -1,8 +1,9 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
 import { Monitor, Moon, Sun } from "lucide-react";
-import { useAuthStore } from "@/store/auth";
+import { SERVER_MODE, useAuthStore } from "@/store/auth";
+import { ServerSession } from "@/components/system/ServerSession";
 import { useThemeStore, type ThemeChoice } from "@/store/theme";
 import { LogoLockup } from "@/components/shell/Logo";
 import { cn } from "@/lib/cn";
@@ -34,6 +35,11 @@ const STEP_VIEWS = {
 
 export function LoginPage() {
   const status = useAuthStore((s) => s.status);
+  const checked = useAuthStore((s) => s.checked);
+  const freshLogin = useAuthStore((s) => s.freshLogin);
+  const beginReset = useAuthStore((s) => s.beginReset);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const resetToken = SERVER_MODE ? searchParams.get("reset") : null;
   const step = useAuthStore((s) => s.step);
   const direction = useAuthStore((s) => s.direction);
   const theme = useThemeStore((s) => s.theme);
@@ -43,19 +49,31 @@ export function LoginPage() {
   const authFlowActive = status !== "signed-out";
   const StepView = STEP_VIEWS[step];
 
+  useEffect(() => {
+    if (!resetToken) return;
+    beginReset(resetToken);
+    const cleanParams = new URLSearchParams(searchParams);
+    cleanParams.delete("reset");
+    setSearchParams(cleanParams, { replace: true });
+  }, [resetToken, searchParams, setSearchParams, beginReset]);
+
   /*
     Der Wechsel läuft bewusst über navigate() statt <Navigate>: nur so lässt
     sich die View-Transition auslösen, die das Signet aus der Entsperr-Sequenz
     an seinen Platz in der Icon-Leiste wandern lässt (siehe .corva-mark-morph).
   */
   useEffect(() => {
-    if (status !== "signed-in") return;
+    if (status !== "signed-in" || !checked || resetToken) return;
+    if (!freshLogin) {
+      navigate("/app", { replace: true });
+      return;
+    }
     const timer = window.setTimeout(
       () => navigate("/app", { replace: true, viewTransition: true }),
       reduceMotion ? 120 : UNLOCK_DURATION_MS,
     );
     return () => window.clearTimeout(timer);
-  }, [navigate, reduceMotion, status]);
+  }, [navigate, reduceMotion, status, freshLogin, checked, resetToken]);
 
   const panel: Variants = {
     hidden: reduceMotion ? {} : { opacity: 0, y: 14 },
@@ -74,6 +92,8 @@ export function LoginPage() {
     hidden: reduceMotion ? {} : { opacity: 0, y: 7 },
     show: { opacity: 1, y: 0, transition: { duration: 0.48, ease: [0.32, 0.72, 0, 1] } },
   };
+
+  if (!checked || resetToken) return <ServerSession />;
 
   return (
     <main className="relative min-h-dvh overflow-hidden bg-surface-sunken">

@@ -1,0 +1,22 @@
+{
+  "server": "Mit dem Server verbunden",
+  "saved": "Im Konto gespeichert",
+  "saving": "Wird gespeichert …",
+  "loading": "Einstellungen werden geladen …",
+  "retry": "Erneut versuchen",
+  "hint": "Diese Auswahl wird in deinem Konto gespeichert und auf anderen Geräten übernommen.",
+  "notificationsHint": "Die ausgewählten Kategorien steuern die Benachrichtigungen in der Kopfzeile. Neue Konten starten mit einer leeren Liste. E-Mail-Zustellung benötigt einen konfigurierten Mailserver.",
+  "notificationsSubtitle": "Entscheide, welche Hinweise dich in Corva erreichen.",
+  "summaryHint": "Zusammenfassungen als Benachrichtigung anzeigen. Ein automatischer täglicher Versand ist noch nicht eingerichtet.",
+  "deliveryHint": "E-Mail-Hinweise gehen an deine Konto-Adresse. Ohne eingerichteten Mailserver lehnt der Server die Aktivierung ab.",
+  "unreadLabel": "Benachrichtigungen, {{count}} ungelesen",
+  "noNotifications": "Keine Benachrichtigungen für deine ausgewählten Kategorien.",
+  "read": "Gelesen",
+  "markRead": "Als gelesen markieren",
+  "readAll": "Alle als gelesen markieren",
+  "testTitle": "Benachrichtigungen testen",
+  "testHint": "Erstellt einen ausdrücklich markierten Testhinweis für dein Konto. Er erscheint nur, wenn die Kategorie eingeschaltet ist. Bei aktiviertem E-Mail-Versand wird zusätzlich eine Testmail an dich gesendet.",
+  "testCategory": "Kategorie",
+  "testSend": "Testhinweis erstellen",
+  "testCreated": "Testhinweis gespeichert. Die Glocke berücksichtigt deine ausgewählten Kategorien."
+}

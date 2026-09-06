@@ -36,17 +36,20 @@ export function DropdownMenuItem({
   children,
   onSelect,
   destructive,
+  disabled,
 }: {
   children: ReactNode;
   onSelect?: () => void;
   destructive?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <RadixDropdown.Item
       onSelect={onSelect}
+      disabled={disabled}
       className={cn(
         "flex cursor-pointer items-center gap-2 rounded-[8px] px-2.5 py-2 text-sm outline-none select-none",
-        "data-[highlighted]:bg-surface-hover",
+        "data-[highlighted]:bg-surface-hover data-[disabled]:cursor-default data-[disabled]:opacity-60",
         destructive ? "text-danger" : "text-text",
       )}
     >

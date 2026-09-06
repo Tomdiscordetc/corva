@@ -5,14 +5,17 @@ import { Topbar } from "./Topbar";
 import { ShortcutsHelpDialog } from "./ShortcutsHelpDialog";
 import { CommandPalette } from "@/components/ui/CommandPalette";
 import { useAuthStore } from "@/store/auth";
+import { ServerSession } from "@/components/system/ServerSession";
 import { useCommandPaletteShortcut } from "@/hooks/useCommandPaletteShortcut";
 import { useNavShortcuts } from "@/hooks/useNavShortcuts";
 
 export function AppShell() {
   const status = useAuthStore((s) => s.status);
+  const checked = useAuthStore((s) => s.checked);
   useCommandPaletteShortcut();
   useNavShortcuts();
 
+  if (!checked) return <ServerSession />;
   if (status !== "signed-in") {
     return <Navigate to="/login" replace />;
   }

@@ -3,8 +3,9 @@ import { ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { CodeInput } from "@/components/ui/CodeInput";
+import { Input } from "@/components/ui/Input";
 import { toast } from "@/components/ui/Toast";
-import { useAuthStore, DEMO_TWO_FACTOR_CODE } from "@/store/auth";
+import { SERVER_MODE, useAuthStore, DEMO_TWO_FACTOR_CODE } from "@/store/auth";
 import { StepFrame } from "./StepFrame";
 import { t } from "@/i18n";
 
@@ -37,18 +38,29 @@ export function TwoFactorStep() {
     <StepFrame
       eyebrow={t("auth.login.twoFactorEyebrow")}
       title={t("auth.login.twoFactorTitle")}
-      subtitle={t("auth.login.twoFactorSubtitle", { email })}
+      subtitle={SERVER_MODE ? t("serverAuth.twoFactorSubtitle") : t("auth.login.twoFactorSubtitle", { email })}
       onSubmit={onSubmit}
       busy={busy}
       error={error}
       onBack={back}
       footer={
-        <p className="text-center text-2xs text-text-faint">
+        !SERVER_MODE && <p className="text-center text-2xs text-text-faint">
           {t("auth.login.twoFactorDemoHint", { code: DEMO_TWO_FACTOR_CODE })}
         </p>
       }
     >
-      <CodeInput
+      {SERVER_MODE ? <Input
+        label={t("serverAuth.twoFactorLabel")}
+        autoComplete="one-time-code"
+        autoCapitalize="none"
+        spellCheck={false}
+        value={code}
+        onChange={(event) => { if (error) clearError(); setCode(event.target.value); }}
+        invalid={!!error}
+        disabled={busy}
+        autoFocus
+        required
+      /> : <CodeInput
         label={t("auth.login.twoFactorLabel")}
         value={code}
         onChange={(value) => {
@@ -59,9 +71,9 @@ export function TwoFactorStep() {
         invalid={!!error}
         disabled={busy}
         autoFocus
-      />
+      />}
 
-      <div className="flex items-start justify-between gap-4">
+      {!SERVER_MODE && <div className="flex items-start justify-between gap-4">
         <div>
           <Checkbox checked={trustDevice} onCheckedChange={setTrustDevice} label={t("auth.login.trustDevice")} />
           <p className="mt-1 ml-6 text-2xs text-text-faint">{t("auth.login.trustDeviceHint")}</p>
@@ -76,7 +88,7 @@ export function TwoFactorStep() {
         >
           {resendIn > 0 ? t("auth.login.resendCodeIn", { seconds: resendIn }) : t("auth.login.resendCode")}
         </button>
-      </div>
+      </div>}
 
       <Button type="submit" size="lg" className="w-full" loading={busy}>
         <ShieldCheck className="size-4" />

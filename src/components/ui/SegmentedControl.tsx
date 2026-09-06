@@ -12,6 +12,7 @@ interface SegmentedControlProps<T extends string> {
   onChange: (value: T) => void;
   "aria-label": string;
   className?: string;
+  disabled?: boolean;
 }
 
 export function SegmentedControl<T extends string>({
@@ -19,6 +20,7 @@ export function SegmentedControl<T extends string>({
   value,
   onChange,
   className,
+  disabled,
   ...props
 }: SegmentedControlProps<T>) {
   return (
@@ -33,6 +35,7 @@ export function SegmentedControl<T extends string>({
           <button
             key={opt.value}
             role="radio"
+            disabled={disabled}
             aria-checked={active}
             onClick={() => onChange(opt.value)}
             className={cn(

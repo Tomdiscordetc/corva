@@ -13,6 +13,10 @@ import { cn } from "@/lib/cn";
 import { t } from "@/i18n";
 import { ThemePreview } from "./ThemePreview";
 import { SETTINGS_SECTIONS, SettingsNavigation } from "./SettingsNavigation";
+import { SERVER_MODE } from "@/lib/api";
+import { ServerAccountSettings } from "./ServerAccountSettings";
+import { ServerConnectionsSettings } from "./ServerConnectionsSettings";
+import { NotificationTest } from "./NotificationTest";
 import "./settings.css";
 
 const THEMES = [
@@ -78,11 +82,14 @@ function SettingsContent({ email }: { email: string }) {
 
   function notificationRow(key: NotificationPreference) {
     return (
-      <Row key={key} labelId={`notification-${key}`} title={t(`settings.notifications.${key}`)} description={t(`settings.notifications.${key}Hint`)}>
-        <Switch id={`notification-${key}`} checked={settings.notifications[key]} onCheckedChange={(value) => settings.changeNotification(key, value)} />
+      <Row key={key} labelId={`notification-${key}`} title={t(`settings.notifications.${key}`)} description={t(SERVER_MODE && key === "summary" ? "serverPreferences.summaryHint" : `settings.notifications.${key}Hint`)}>
+        <Switch id={`notification-${key}`} disabled={settings.busy} checked={settings.notifications[key]} onCheckedChange={(value) => { void settings.changeNotification(key, value); }} />
       </Row>
     );
   }
+
+  if (settings.loadError) return <div className="mx-auto max-w-3xl space-y-4 rounded-lg border border-line bg-surface-raised p-6"><h1 className="text-lg font-semibold">{t("settings.title")}</h1><p role="alert" className="text-sm text-danger">{settings.loadError}</p><Button variant="secondary" onClick={settings.retry}>{t("serverPreferences.retry")}</Button></div>;
+  if (settings.loading) return <p role="status" className="p-6 text-sm text-text-muted">{t("serverPreferences.loading")}</p>;
 
   return (
     <div className="mx-auto max-w-6xl space-y-7">
@@ -94,7 +101,7 @@ function SettingsContent({ email }: { email: string }) {
         </div>
         <div className="flex items-center gap-2 text-xs text-text-muted" role="status" aria-live="polite">
           {settings.feedback === "saved" ? <Check className="size-3.5 text-positive" aria-hidden /> : <Monitor className="size-3.5" aria-hidden />}
-          {t(settings.feedback === "saved" ? "settings.saved" : "settings.device")}
+          {t(settings.busy ? "serverPreferences.saving" : settings.feedback === "saved" ? SERVER_MODE ? "serverPreferences.saved" : "settings.saved" : SERVER_MODE ? "serverPreferences.server" : "settings.device")}
         </div>
       </header>
 
@@ -102,19 +109,19 @@ function SettingsContent({ email }: { email: string }) {
         <aside className={cn("min-w-0", settings.contextPanelOpen && "md:hidden")}><SettingsNavigation /></aside>
 
         <div className={cn("min-w-0 space-y-5", !settings.contextPanelOpen && "xl:col-span-3")}>
-          {settings.feedback === "error" && <p role="alert" className="rounded-md border border-danger/20 bg-danger-tint p-4 text-xs text-danger">{t("settings.saveError")}</p>}
+          {settings.feedback === "error" && <p role="alert" className="rounded-md border border-danger/20 bg-danger-tint p-4 text-xs text-danger">{settings.errorMessage || t("settings.saveError")}</p>}
           <section key={section} className="settings-panel space-y-5" aria-labelledby="settings-section-heading">
             <div className="pb-1">
               <div className="flex flex-wrap items-center gap-3">
                 <h2 id="settings-section-heading" className="text-lg font-semibold tracking-tight text-text">{t(`settings.${section}.title`)}</h2>
-                {section === "notifications" && <Badge>{t("settings.preview")}</Badge>}
+                {section === "notifications" && !SERVER_MODE && <Badge>{t("settings.preview")}</Badge>}
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-text-muted">{t(`settings.${section}.subtitle`)}</p>
+              <p className="mt-2 text-sm leading-relaxed text-text-muted">{t(SERVER_MODE && section === "notifications" ? "serverPreferences.notificationsSubtitle" : `settings.${section}.subtitle`)}</p>
             </div>
 
             {section === "appearance" && <>
               <Group title={t("settings.appearance.theme")} subtitle={t("settings.appearance.themeHint")}>
-                <fieldset className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-3 sm:p-6">
+                <fieldset disabled={settings.busy} className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-3 sm:p-6">
                   <legend className="sr-only">{t("settings.appearance.theme")}</legend>
                   {THEMES.map(({ value, Icon }) => (
                     <label key={value} className="group relative min-w-0 cursor-pointer">
@@ -132,7 +139,7 @@ function SettingsContent({ email }: { email: string }) {
               </Group>
 
               <Group title={t("settings.appearance.density")} subtitle={t("settings.appearance.densityHint")}>
-                <fieldset className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-2 sm:p-6">
+                <fieldset disabled={settings.busy} className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-2 sm:p-6">
                   <legend className="sr-only">{t("settings.appearance.density")}</legend>
                   {(["comfortable", "compact"] as const).map((value) => (
                     <label key={value} className="relative cursor-pointer">
@@ -151,7 +158,7 @@ function SettingsContent({ email }: { email: string }) {
 
               <Group title={t("settings.appearance.layout")}>
                 <Row labelId="settings-context-panel" title={t("settings.appearance.sidebar")} description={t("settings.appearance.sidebarHint")}>
-                  <Switch id="settings-context-panel" checked={settings.contextPanelOpen} onCheckedChange={settings.changeContextPanel} />
+                  <Switch id="settings-context-panel" disabled={settings.busy} checked={settings.contextPanelOpen} onCheckedChange={settings.changeContextPanel} />
                 </Row>
                 <Row title={t("settings.appearance.shortcuts")} description={t("settings.appearance.shortcutsHint")}>
                   <Button variant="secondary" size="sm" onClick={settings.showShortcuts}><Keyboard className="size-3.5" aria-hidden />{t("settings.appearance.showShortcuts")}</Button>
@@ -163,15 +170,16 @@ function SettingsContent({ email }: { email: string }) {
             </>}
 
             {section === "notifications" && <>
-              <Notice>{t("settings.notifications.notice")}</Notice>
+              <Notice>{t(SERVER_MODE ? "serverPreferences.notificationsHint" : "settings.notifications.notice")}</Notice>
               <Group title={t("settings.notifications.events")}>
                 {(["inquiries", "assignments", "appointments", "summary"] as const).map(notificationRow)}
               </Group>
               <Group title={t("settings.notifications.delivery")}>{notificationRow("email")}</Group>
-              <p className="text-xs leading-relaxed text-text-muted">{t("settings.notifications.future")}</p>
+              <p className="text-xs leading-relaxed text-text-muted">{t(SERVER_MODE ? "serverPreferences.deliveryHint" : "settings.notifications.future")}</p>
+              {SERVER_MODE && <NotificationTest />}
             </>}
 
-            {section === "account" && user && <>
+            {section === "account" && user && (SERVER_MODE ? <ServerAccountSettings /> : <>
               <Group title={t("settings.account.profile")} subtitle={t("settings.account.profileHint")}>
                 <div className="flex items-center gap-4 border-b border-line px-5 py-5 sm:px-6"><Avatar name={user.name} size="lg" /><div className="min-w-0"><p className="break-words text-sm font-semibold text-text">{user.name}</p><p className="mt-1 break-all text-xs text-text-muted">{user.email}</p></div></div>
                 <dl className="space-y-5 px-5 py-5 sm:px-6">
@@ -185,9 +193,9 @@ function SettingsContent({ email }: { email: string }) {
               <Group title={t("settings.account.session")}>
                 <Row title={t("settings.account.logout")} description={t("settings.account.sessionHint")}><Button variant="secondary" size="sm" onClick={logout}><LockKeyhole className="size-3.5" aria-hidden />{t("settings.account.logout")}</Button></Row>
               </Group>
-            </>}
+            </>)}
 
-            {section === "connections" && <>
+            {section === "connections" && (SERVER_MODE ? <ServerConnectionsSettings /> : <>
               <Notice>{t("settings.connections.notice")}</Notice>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {PLANNED_CONNECTIONS.map((key) => {
@@ -196,9 +204,9 @@ function SettingsContent({ email }: { email: string }) {
                 })}
               </div>
               <p className="flex items-start gap-2 text-xs leading-relaxed text-text-muted"><CloudOff className="mt-0.5 size-4 shrink-0" aria-hidden />{t("settings.connections.footer")}</p>
-            </>}
+            </>)}
           </section>
-          <footer className="flex items-center gap-2 border-t border-line pt-5 text-2xs text-text-faint"><ShieldCheck className="size-3.5 shrink-0" aria-hidden />{t("settings.localHint")}</footer>
+          <footer className="flex items-center gap-2 border-t border-line pt-5 text-2xs text-text-faint"><ShieldCheck className="size-3.5 shrink-0" aria-hidden />{t(SERVER_MODE ? "serverPreferences.hint" : "settings.localHint")}</footer>
         </div>
       </div>
     </div>

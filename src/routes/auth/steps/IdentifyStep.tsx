@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { ArrowRight, LockKeyhole, Mail } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { useAuthStore } from "@/store/auth";
+import { SERVER_MODE, useAuthStore } from "@/store/auth";
 import { StepFrame, StepDots } from "./StepFrame";
 import { t } from "@/i18n";
 
@@ -13,6 +13,7 @@ export function IdentifyStep() {
   const goToStep = useAuthStore((s) => s.goToStep);
   const clearError = useAuthStore((s) => s.clearError);
   const error = useAuthStore((s) => s.error);
+  const notice = useAuthStore((s) => s.notice);
   const busy = useAuthStore((s) => s.busy);
   const [email, setEmail] = useState(storedEmail);
 
@@ -32,9 +33,10 @@ export function IdentifyStep() {
         busy={busy}
         error={error}
         footer={
-          <p className="text-center text-2xs text-text-faint">{t("auth.login.firstLoginHint")}</p>
+          <p className="text-center text-2xs text-text-faint">{t(SERVER_MODE ? "serverAuth.firstLoginHint" : "auth.login.firstLoginHint")}</p>
         }
       >
+        {notice && <p role="status" className="rounded-md bg-positive-tint px-4 py-3 text-sm text-positive">{notice}</p>}
         <Input
           label={t("auth.login.email")}
           type="email"

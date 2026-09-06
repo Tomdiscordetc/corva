@@ -3,7 +3,7 @@ import { Mail, MailCheck, Send } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { useAuthStore } from "@/store/auth";
+import { SERVER_MODE, useAuthStore } from "@/store/auth";
 import { StepFrame } from "./StepFrame";
 import { t } from "@/i18n";
 
@@ -86,7 +86,7 @@ export function RecoverSentStep() {
 
       <h1 className="text-xl font-semibold tracking-tight text-text">{t("auth.login.recoverSentTitle")}</h1>
       <p className="mx-auto mt-2 max-w-sm text-sm text-text-muted">
-        {t("auth.login.recoverSentSubtitle", { email })}
+        {t(SERVER_MODE ? "serverAuth.recoverySent" : "auth.login.recoverSentSubtitle", { email })}
       </p>
 
       <Button variant="secondary" size="lg" className="mt-7 w-full" onClick={() => goToStep("identify")}>
@@ -94,7 +94,7 @@ export function RecoverSentStep() {
       </Button>
 
       <p className="mt-6 border-t border-line pt-5 text-2xs text-text-faint">
-        {t("auth.login.recoverSentDemoHint")}
+        {t(SERVER_MODE ? "serverAuth.recoverySentHint" : "auth.login.recoverSentDemoHint")}
       </p>
     </div>
   );

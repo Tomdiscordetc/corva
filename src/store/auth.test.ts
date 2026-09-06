@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { installLocalStorageStub } from "@/test/localStorageStub";
 
 installLocalStorageStub();
+vi.stubEnv("VITE_AUTH_MODE", "demo");
 
 /*
   Bewusst gegen den Demo-Store statt gegen `useAuthStore`: der wechselt seit
