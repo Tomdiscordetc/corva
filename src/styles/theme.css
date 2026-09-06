@@ -53,6 +53,15 @@
   --color-presence-busy: oklch(60% 0.21 25);
   --color-presence-away: oklch(76% 0.16 78);
 
+  /* Pipeline-Stufen: eine ruhige Folge von kühl nach warm, damit der
+     Fortschritt im Trichter ablesbar ist, ohne dass die Liste bunt wird. */
+  --color-stage-neu: oklch(62% 0.20 259);
+  --color-stage-kontaktiert: oklch(60% 0.10 240);
+  --color-stage-beratung: oklch(64% 0.13 200);
+  --color-stage-angebot: oklch(72% 0.15 78);
+  --color-stage-abschluss: oklch(64% 0.16 148);
+  --color-stage-verloren: oklch(60% 0.06 260);
+
   /* Semantische Oberflächen- und Textfarben — Werte hier sind der Hellmodus.
      Dunkelmodus überschreibt dieselben Namen weiter unten. */
   --color-surface: var(--color-neutral-0);
@@ -185,6 +194,13 @@
     --color-presence-busy: oklch(70% 0.19 25);
     --color-presence-away: oklch(81% 0.15 78);
 
+    --color-stage-neu: oklch(70% 0.19 259);
+    --color-stage-kontaktiert: oklch(70% 0.09 240);
+    --color-stage-beratung: oklch(73% 0.12 200);
+    --color-stage-angebot: oklch(80% 0.14 78);
+    --color-stage-abschluss: oklch(73% 0.15 148);
+    --color-stage-verloren: oklch(62% 0.05 260);
+
     --shadow-soft: 0 1px 2px color-mix(in oklch, black 40%, transparent), 0 2px 8px color-mix(in oklch, black 30%, transparent);
     --shadow-raised: 0 2px 4px color-mix(in oklch, black 45%, transparent), 0 8px 24px color-mix(in oklch, black 40%, transparent);
     --shadow-overlay: 0 12px 32px color-mix(in oklch, black 55%, transparent), 0 2px 8px color-mix(in oklch, black 35%, transparent);
@@ -232,6 +248,13 @@
   --color-presence-free: oklch(74% 0.17 148);
   --color-presence-busy: oklch(70% 0.19 25);
   --color-presence-away: oklch(81% 0.15 78);
+
+  --color-stage-neu: oklch(70% 0.19 259);
+  --color-stage-kontaktiert: oklch(70% 0.09 240);
+  --color-stage-beratung: oklch(73% 0.12 200);
+  --color-stage-angebot: oklch(80% 0.14 78);
+  --color-stage-abschluss: oklch(73% 0.15 148);
+  --color-stage-verloren: oklch(62% 0.05 260);
 
   --shadow-soft: 0 1px 2px color-mix(in oklch, black 40%, transparent), 0 2px 8px color-mix(in oklch, black 30%, transparent);
   --shadow-raised: 0 2px 4px color-mix(in oklch, black 45%, transparent), 0 8px 24px color-mix(in oklch, black 40%, transparent);

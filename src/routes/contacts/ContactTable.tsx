@@ -1,5 +1,4 @@
 import { useState, type MouseEvent } from "react";
-import { motion, useReducedMotion } from "motion/react";
 import { Avatar } from "@/components/ui/Avatar";
 import { contactName, type Contact, type PipelineStage } from "@/demo/contacts";
 import { BranchList, LastContact, SourceIcon, StagePill } from "./ContactBits";
@@ -16,37 +15,47 @@ interface ContactTableProps {
 
 export function ContactTable({ contacts, onOpen, onEdit, onDelete, onMove }: ContactTableProps) {
   return (
-    <div className="overflow-x-auto rounded-md border border-line">
-      <table className="w-full min-w-[720px] border-collapse text-left">
-        <thead>
-          <tr className="border-b border-line bg-surface-subtle">
-            <Th>{t("contacts.column.name")}</Th>
-            <Th>{t("contacts.column.stage")}</Th>
-            <Th>{t("contacts.column.branches")}</Th>
-            <Th>{t("contacts.column.assignee")}</Th>
-            <Th>{t("contacts.column.lastContact")}</Th>
-            <th className="w-12 px-2" />
-          </tr>
-        </thead>
-        <tbody>
-          {contacts.map((contact) => (
-            <ContactTableRow
-              key={contact.id}
-              contact={contact}
-              onOpen={() => onOpen(contact)}
-              onEdit={() => onEdit(contact)}
-              onDelete={() => onDelete(contact)}
-              onMove={(stage) => onMove(contact, stage)}
-            />
-          ))}
-        </tbody>
-      </table>
+    <div className="overflow-hidden rounded-lg border border-line bg-surface shadow-[var(--shadow-soft)]">
+      <div className="max-h-[calc(100dvh-22rem)] overflow-auto">
+        <table className="w-full min-w-[760px] border-collapse text-left">
+          {/* Kopf bleibt beim Blättern stehen — bei langen Listen sonst Ratespiel. */}
+          <thead className="sticky top-0 z-10 bg-surface-subtle/95 backdrop-blur-sm">
+            <tr className="border-b border-line">
+              <Th className="w-[30%]">{t("contacts.column.name")}</Th>
+              <Th className="w-[14%]">{t("contacts.column.stage")}</Th>
+              <Th className="w-[22%]">{t("contacts.column.branches")}</Th>
+              <Th className="w-[16%]">{t("contacts.column.assignee")}</Th>
+              <Th className="w-[16%]">{t("contacts.column.lastContact")}</Th>
+              <th className="w-10 px-2" />
+            </tr>
+          </thead>
+          <tbody>
+            {contacts.map((contact) => (
+              <ContactTableRow
+                key={contact.id}
+                contact={contact}
+                onOpen={() => onOpen(contact)}
+                onEdit={() => onEdit(contact)}
+                onDelete={() => onDelete(contact)}
+                onMove={(stage) => onMove(contact, stage)}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
 
-function Th({ children }: { children: React.ReactNode }) {
-  return <th className="px-4 py-2.5 text-2xs font-medium text-text-muted">{children}</th>;
+function Th({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <th
+      scope="col"
+      className={`px-4 py-2.5 text-2xs font-medium tracking-wide whitespace-nowrap text-text-faint uppercase ${className ?? ""}`}
+    >
+      {children}
+    </th>
+  );
 }
 
 function ContactTableRow({
@@ -63,7 +72,6 @@ function ContactTableRow({
   onMove: (stage: PipelineStage) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const reduceMotion = useReducedMotion();
 
   function openMenu(event: MouseEvent) {
     event.preventDefault();
@@ -71,24 +79,29 @@ function ContactTableRow({
   }
 
   return (
-    <motion.tr
-      layout={!reduceMotion}
+    <tr
       onContextMenu={openMenu}
-      className="border-b border-line last:border-0 transition-colors duration-[var(--t-fast)] hover:bg-surface-subtle"
+      onClick={onOpen}
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") onOpen();
+      }}
+      aria-label={contactName(contact)}
+      className="group cursor-pointer border-b border-line transition-colors duration-[var(--t-fast)] last:border-0 hover:bg-surface-subtle focus-visible:bg-surface-subtle"
     >
       <td className="px-4 py-3">
-        <button type="button" onClick={onOpen} className="flex items-center gap-2.5 text-left">
+        <div className="flex items-center gap-3">
           <Avatar name={contactName(contact)} size="sm" />
-          <span className="min-w-0">
-            <span className="flex items-center gap-1.5">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5">
               <span className="truncate text-sm font-medium text-text">{contactName(contact)}</span>
               <SourceIcon source={contact.source} />
-            </span>
+            </div>
             <span className="block truncate text-2xs text-text-faint">
-              {contact.city || contact.email || contact.phone}
+              {[contact.city, contact.email || contact.phone].filter(Boolean).join(" · ")}
             </span>
-          </span>
-        </button>
+          </div>
+        </div>
       </td>
       <td className="px-4 py-3">
         <StagePill stage={contact.stage} />
@@ -96,21 +109,34 @@ function ContactTableRow({
       <td className="px-4 py-3">
         <BranchList branches={contact.branches} />
       </td>
-      <td className="px-4 py-3 text-2xs text-text-muted">{contact.assignee}</td>
+      <td className="px-4 py-3">
+        <span className="truncate text-2xs text-text-muted">{contact.assignee}</span>
+      </td>
       <td className="px-4 py-3">
         <LastContact contact={contact} />
       </td>
       <td className="px-2 py-3">
-        <ContactActionsMenu
-          contact={contact}
-          open={menuOpen}
-          onOpenChange={setMenuOpen}
-          onOpen={onOpen}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          onMove={onMove}
-        />
+        {/*
+          Die Schaltfläche tritt zurück, bis die Zeile gebraucht wird — sonst
+          steht in jeder Zeile ein Punktehaufen. Über Tastatur und Rechtsklick
+          bleibt sie jederzeit erreichbar.
+        */}
+        <div
+          onClick={(event) => event.stopPropagation()}
+          className="opacity-0 transition-opacity duration-[var(--t-fast)] group-hover:opacity-100 group-focus-within:opacity-100 data-[open=true]:opacity-100"
+          data-open={menuOpen}
+        >
+          <ContactActionsMenu
+            contact={contact}
+            open={menuOpen}
+            onOpenChange={setMenuOpen}
+            onOpen={onOpen}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onMove={onMove}
+          />
+        </div>
       </td>
-    </motion.tr>
+    </tr>
   );
 }

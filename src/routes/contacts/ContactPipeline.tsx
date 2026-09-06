@@ -16,7 +16,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { contactName, PIPELINE_STAGES, type Contact, type PipelineStage } from "@/demo/contacts";
-import { BranchList, LastContact } from "./ContactBits";
+import { BranchList, LastContact, StageDot } from "./ContactBits";
 import { cn } from "@/lib/cn";
 import { t } from "@/i18n";
 
@@ -137,9 +137,10 @@ function StageColumn({
         isOver && "border-accent bg-accent-tint",
       )}
     >
-      <p className="flex items-center justify-between px-1 text-2xs font-medium text-text-muted">
+      <p className="flex items-center gap-1.5 px-1 text-2xs font-medium text-text-muted">
+        <StageDot stage={stage} />
         {t(`contacts.stage.${stage}`)}
-        <span className="text-text-faint">{contacts.length}</span>
+        <span className="ml-auto tabular-nums text-text-faint">{contacts.length}</span>
       </p>
 
       <SortableContext items={contacts.map((c) => c.id)} strategy={verticalListSortingStrategy}>
@@ -188,7 +189,7 @@ function PipelineCard({
   return (
     <div
       className={cn(
-        "flex items-start gap-2 rounded-md border border-line bg-surface p-2.5",
+        "flex items-start gap-2 rounded-md border border-line bg-surface p-2.5 shadow-[var(--shadow-soft)]",
         dragging && "shadow-[var(--shadow-raised)]",
       )}
     >

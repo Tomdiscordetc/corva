@@ -37,6 +37,7 @@ interface TaskRowProps {
 
 export function TaskRow({ task, onToggle, onEdit, onDelete }: TaskRowProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [swiping, setSwiping] = useState(false);
   const reduceMotion = useReducedMotion();
   const overdue = isOverdue(task);
   const dueToday = isDueToday(task);
@@ -58,9 +59,14 @@ export function TaskRow({ task, onToggle, onEdit, onDelete }: TaskRowProps) {
       className="relative overflow-hidden rounded-md border border-line bg-surface"
     >
       {/* Auf dem Handy nach links ziehen löscht — der rote Grund erscheint dabei. */}
+      {/* Erst beim Ziehen sichtbar, sonst blitzt sie an der Kante durch. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 flex items-center gap-2 bg-danger px-5 text-sm font-medium text-neutral-0"
+        className={cn(
+          "pointer-events-none absolute inset-y-0 right-0 flex items-center gap-2 bg-danger px-5 text-sm font-medium text-neutral-0",
+          "transition-opacity duration-[var(--t-fast)]",
+          swiping ? "opacity-100" : "opacity-0",
+        )}
       >
         <Trash2 className="size-4" />
         {t("tasks.row.delete")}
@@ -71,7 +77,9 @@ export function TaskRow({ task, onToggle, onEdit, onDelete }: TaskRowProps) {
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={{ left: 0.6, right: 0 }}
         dragSnapToOrigin
+        onDragStart={() => setSwiping(true)}
         onDragEnd={(_, info) => {
+          setSwiping(false);
           if (info.offset.x < -120) onDelete();
         }}
         className={cn(

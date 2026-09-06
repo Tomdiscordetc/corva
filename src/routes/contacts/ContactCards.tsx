@@ -5,6 +5,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { contactName, type Contact, type PipelineStage } from "@/demo/contacts";
 import { BranchList, LastContact, SourceIcon, StagePill } from "./ContactBits";
 import { ContactActionsMenu } from "./ContactActionsMenu";
+import { cn } from "@/lib/cn";
 import { t } from "@/i18n";
 
 interface ContactCardsProps {
@@ -46,6 +47,7 @@ function ContactCard({
   onMove: (stage: PipelineStage) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [swiping, setSwiping] = useState(false);
   const reduceMotion = useReducedMotion();
 
   function openMenu(event: MouseEvent) {
@@ -63,9 +65,17 @@ function ContactCard({
       onContextMenu={openMenu}
       className="relative overflow-hidden rounded-md border border-line bg-surface"
     >
+      {/*
+        Erst beim Ziehen sichtbar: sonst blitzt die rote Fläche an der Kante
+        der Karte durch und die Liste wirkt unsauber.
+      */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 flex items-center gap-2 bg-danger px-5 text-sm font-medium text-neutral-0"
+        className={cn(
+          "pointer-events-none absolute inset-y-0 right-0 flex items-center gap-2 bg-danger px-5 text-sm font-medium text-neutral-0",
+          "transition-opacity duration-[var(--t-fast)]",
+          swiping ? "opacity-100" : "opacity-0",
+        )}
       >
         <Trash2 className="size-4" />
         {t("contacts.row.delete")}
@@ -76,7 +86,9 @@ function ContactCard({
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={{ left: 0.6, right: 0 }}
         dragSnapToOrigin
+        onDragStart={() => setSwiping(true)}
         onDragEnd={(_, info) => {
+          setSwiping(false);
           if (info.offset.x < -120) onDelete();
         }}
         className="relative bg-surface p-4"

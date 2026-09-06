@@ -337,7 +337,7 @@
     "localHint": "Kontakte liegen bis zum Server-Abschnitt nur auf diesem Gerät.",
     "new": "Neuer Kontakt",
     "search": "Name, Ort, E-Mail oder Notiz suchen …",
-    "count": "{{count}} von {{total}}",
+    "count": "{{count}} von {{total}} Kontakten",
     "view": {
       "label": "Ansicht",
       "table": "Tabelle",
@@ -483,6 +483,11 @@
       "logSave": "Im Verlauf festhalten",
       "logSaved": "Im Verlauf festgehalten",
       "logRequired": "Bitte beschreibe kurz, was passiert ist."
+    },
+    "filterChip": {
+      "remove": "{{label}} entfernen",
+      "query": "Suche: {{value}}",
+      "clearAll": "Alle Filter entfernen"
     }
   }
 }

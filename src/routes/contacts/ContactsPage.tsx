@@ -1,39 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
-import { AlertCircle, Plus, Search, Users } from "lucide-react";
+import { AlertCircle, Plus, Users } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { toast } from "@/components/ui/Toast";
 import { useContacts } from "@/hooks/useContacts";
 import { useAuthStore } from "@/store/auth";
-import {
-  INSURANCE_BRANCHES,
-  PIPELINE_STAGES,
-  contactName,
-  type Contact,
-  type InsuranceBranch,
-  type PipelineStage,
-} from "@/demo/contacts";
-import { DEFAULT_CONTACT_FILTER, type ContactSort } from "@/lib/contactFilters";
+import { PIPELINE_STAGES, contactName, type Contact, type PipelineStage } from "@/demo/contacts";
+import { DEFAULT_CONTACT_FILTER } from "@/lib/contactFilters";
 import { ContactTable } from "./ContactTable";
 import { ContactCards } from "./ContactCards";
 import { ContactDialog } from "./ContactDialog";
 import { ContactPipeline } from "./ContactPipeline";
+import { ContactToolbar, type ContactView } from "./ContactToolbar";
+import { StageDot } from "./ContactBits";
 import { t } from "@/i18n";
-
-type ViewMode = "table" | "cards" | "pipeline";
-const SORTS: ContactSort[] = ["zuletzt", "name", "angelegt", "stufe"];
 
 export function ContactsPage() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const contacts = useContacts();
-  const [view, setView] = useState<ViewMode>("table");
+  const [view, setView] = useState<ContactView>("table");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Contact | null>(null);
 
@@ -104,8 +93,8 @@ export function ContactsPage() {
         </p>
       )}
 
-      {/* Stufen als Schnellfilter mit Zähler — der Trichter auf einen Blick. */}
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Stufen als Schnellfilter — der Trichter auf einen Blick. */}
+      <div className="flex flex-wrap items-center gap-1">
         <StageChip
           active={contacts.filter.stage === "alle"}
           label={t("contacts.stage.alle")}
@@ -115,6 +104,7 @@ export function ContactsPage() {
         {PIPELINE_STAGES.map((stage) => (
           <StageChip
             key={stage}
+            stage={stage}
             active={contacts.filter.stage === stage}
             label={t(`contacts.stage.${stage}`)}
             count={contacts.stageCounts[stage]}
@@ -123,60 +113,15 @@ export function ContactsPage() {
         ))}
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-[1fr_auto_auto_auto_auto]">
-        <Input
-          label={t("contacts.search")}
-          hideLabel
-          type="search"
-          placeholder={t("contacts.search")}
-          value={contacts.filter.query}
-          onChange={(event) => contacts.setFilter({ ...contacts.filter, query: event.target.value })}
-          trailing={<Search className="size-4" />}
-        />
-        <Select
-          label={t("contacts.branch.label")}
-          hideLabel
-          value={contacts.filter.branch}
-          onChange={(event) =>
-            contacts.setFilter({ ...contacts.filter, branch: event.target.value as InsuranceBranch | "alle" })
-          }
-          options={[
-            { value: "alle", label: t("contacts.branch.alle") },
-            ...INSURANCE_BRANCHES.map((branch) => ({ value: branch, label: t(`contacts.branch.${branch}`) })),
-          ]}
-        />
-        <Select
-          label={t("contacts.assignee.label")}
-          hideLabel
-          value={contacts.filter.assignee}
-          onChange={(event) => contacts.setFilter({ ...contacts.filter, assignee: event.target.value })}
-          options={[
-            { value: "alle", label: t("contacts.assignee.alle") },
-            ...assignees.map((name) => ({ value: name, label: name })),
-          ]}
-        />
-        <Select
-          label={t("contacts.sort.label")}
-          hideLabel
-          value={contacts.filter.sort}
-          onChange={(event) => contacts.setFilter({ ...contacts.filter, sort: event.target.value as ContactSort })}
-          options={SORTS.map((sort) => ({ value: sort, label: t(`contacts.sort.${sort}`) }))}
-        />
-        <SegmentedControl
-          aria-label={t("contacts.view.label")}
-          value={view}
-          onChange={(value: ViewMode) => setView(value)}
-          options={[
-            { value: "table", label: t("contacts.view.table") },
-            { value: "cards", label: t("contacts.view.cards") },
-            { value: "pipeline", label: t("contacts.view.pipeline") },
-          ]}
-        />
-      </div>
-
-      <p className="text-2xs text-text-faint">
-        {t("contacts.count", { count: contacts.visible.length, total: contacts.contacts.length })}
-      </p>
+      <ContactToolbar
+        filter={contacts.filter}
+        onFilterChange={contacts.setFilter}
+        assignees={assignees}
+        view={view}
+        onViewChange={setView}
+        shown={contacts.visible.length}
+        total={contacts.contacts.length}
+      />
 
       {view === "pipeline" ? (
         <ContactPipeline
@@ -247,11 +192,13 @@ function StageChip({
   active,
   label,
   count,
+  stage,
   onClick,
 }: {
   active: boolean;
   label: string;
   count: number;
+  stage?: PipelineStage;
   onClick: () => void;
 }) {
   return (
@@ -261,12 +208,13 @@ function StageChip({
       onClick={onClick}
       className={
         active
-          ? "rounded-md bg-invert px-3 py-1.5 text-xs font-medium text-on-invert"
-          : "rounded-md px-3 py-1.5 text-xs font-medium text-text-muted transition-colors duration-[var(--t-fast)] hover:bg-surface-hover hover:text-text"
+          ? "inline-flex items-center gap-1.5 rounded-md bg-invert px-2.5 py-1.5 text-xs font-medium text-on-invert"
+          : "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-text-muted transition-colors duration-[var(--t-fast)] hover:bg-surface-hover hover:text-text"
       }
     >
+      {stage && <StageDot stage={stage} className={active ? "opacity-90" : undefined} />}
       {label}
-      <span className={active ? "ml-1.5 opacity-70" : "ml-1.5 text-text-faint"}>{count}</span>
+      <span className={active ? "tabular-nums opacity-70" : "tabular-nums text-text-faint"}>{count}</span>
     </button>
   );
 }
