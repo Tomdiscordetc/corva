@@ -1,0 +1,14 @@
+{
+  "name": "corva-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.16.0" },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/start.mjs",
+    "dev": "node --env-file-if-exists=.env --watch src/start.mjs",
+    "test": "node --test test/*.test.mjs",
+    "create-user": "node --env-file-if-exists=.env src/create-user.mjs"
+  },
+  "dependencies": { "nodemailer": "^7.0.10" }
+}

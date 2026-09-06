@@ -6,3 +6,5 @@ dist-ssr
 .env.*
 !.env.example
 *.tsbuildinfo
+server/data/
+server/node_modules/
