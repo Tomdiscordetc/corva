@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PRESENCE_ORDER, PRESENCE_STYLES, presenceFromLabel } from "./presence";
+import { PRESENCE_COLOR_VAR, PRESENCE_ORDER, presenceFromLabel } from "./presence";
 
 describe("Anwesenheit", () => {
   it("erkennt freie Kolleginnen und Kollegen", () => {
@@ -25,10 +25,9 @@ describe("Anwesenheit", () => {
     expect(presenceFromLabel("")).toBe("beschaeftigt");
   });
 
-  it("hat für jede Stufe Farbe und Leuchten hinterlegt", () => {
-    for (const status of PRESENCE_ORDER) {
-      expect(PRESENCE_STYLES[status].dotClass).toMatch(/^bg-presence-/);
-      expect(PRESENCE_STYLES[status].glowClass).toMatch(/^presence-glow-/);
-    }
+  it("hat für jede Stufe ein eigenes Farb-Token", () => {
+    const vars = PRESENCE_ORDER.map((status) => PRESENCE_COLOR_VAR[status]);
+    for (const name of vars) expect(name).toMatch(/^--color-presence-/);
+    expect(new Set(vars).size).toBe(PRESENCE_ORDER.length);
   });
 });

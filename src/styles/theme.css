@@ -420,33 +420,73 @@ html[data-nav-direction="backward"]::view-transition-new(main-content) { animati
 }
 
 /*
-  Anwesenheitspunkt: der Schein liegt als weicher Ring um den Kern, damit der
-  Punkt auf hellem wie dunklem Grund „an" wirkt. „Frei" atmet leicht, die
-  anderen Stufen stehen still — Bewegung soll nicht zum Stören einladen.
+  Anwesenheitspunkt am Profilbild. Der Punkt liegt nicht als Kreis mit Rand
+  über dem Bild — das Bild bekommt an dieser Stelle ein echtes Loch. So bleibt
+  der Abstand auf jedem Untergrund gleich sauber, auch beim Überfahren, wo
+  sich die Fläche darunter aufhellt.
 */
-.presence-glow-free {
-  box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-presence-free) 22%, transparent),
-    0 0 8px color-mix(in oklch, var(--color-presence-free) 65%, transparent);
-  animation: presence-breathe 2.8s var(--ease-standard) infinite;
+.presence-cutout {
+  --presence-hole: calc(var(--presence-size) / 2 + var(--presence-gap));
+  -webkit-mask-image: radial-gradient(
+    circle at calc(100% - var(--presence-size) / 2) calc(100% - var(--presence-size) / 2),
+    transparent var(--presence-hole),
+    #000 calc(var(--presence-hole) + 0.5px)
+  );
+  mask-image: radial-gradient(
+    circle at calc(100% - var(--presence-size) / 2) calc(100% - var(--presence-size) / 2),
+    transparent var(--presence-hole),
+    #000 calc(var(--presence-hole) + 0.5px)
+  );
 }
 
-.presence-glow-busy {
-  box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-presence-busy) 22%, transparent),
-    0 0 8px color-mix(in oklch, var(--color-presence-busy) 60%, transparent);
+/*
+  Der Punkt selbst: leichter Verlauf von oben links, damit er wie eine kleine
+  Leuchtperle wirkt statt wie ein flacher Farbfleck, dazu eine feine dunkle
+  Kante und ein knapper Schein.
+*/
+.presence-dot {
+  position: relative;
+  width: var(--presence-size);
+  height: var(--presence-size);
+  border-radius: 9999px;
+  background-image: radial-gradient(
+    circle at 32% 28%,
+    color-mix(in oklch, white 42%, var(--presence-color)),
+    var(--presence-color) 68%
+  );
+  box-shadow:
+    inset 0 0 0 0.5px color-mix(in oklch, black 16%, transparent),
+    0 0 5px color-mix(in oklch, var(--presence-color) 50%, transparent);
 }
 
-.presence-glow-away {
-  box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-presence-away) 24%, transparent),
-    0 0 7px color-mix(in oklch, var(--color-presence-away) 55%, transparent);
+/*
+  Sitz am Profilbild. Eigene Klasse statt der Utilities, weil .presence-dot
+  weiter oben `position: relative` setzt und bei gleicher Spezifität die
+  später notierte Regel gewinnt — mit `absolute` als Utility landete der
+  Punkt sonst neben dem Bild statt darauf.
+*/
+.presence-dot--on-avatar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
-@keyframes presence-breathe {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.72; }
+/* „Frei" schlägt einmal ruhig aus — ein Ring, nicht der ganze Punkt. */
+.presence-dot[data-status="frei"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  animation: presence-pulse 2.9s var(--ease-standard) infinite;
+}
+
+@keyframes presence-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--presence-color) 55%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 calc(var(--presence-size) * 0.55) transparent; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .presence-glow-free {
+  .presence-dot[data-status="frei"]::after {
     animation: none;
   }
 }

@@ -7,16 +7,11 @@ export type PresenceStatus = "frei" | "beschaeftigt" | "abwesend";
 
 export const PRESENCE_ORDER: PresenceStatus[] = ["frei", "beschaeftigt", "abwesend"];
 
-export interface PresenceStyle {
-  /** Farb-Token aus theme.css — nie eine feste Farbe im Baustein. */
-  dotClass: string;
-  glowClass: string;
-}
-
-export const PRESENCE_STYLES: Record<PresenceStatus, PresenceStyle> = {
-  frei: { dotClass: "bg-presence-free", glowClass: "presence-glow-free" },
-  beschaeftigt: { dotClass: "bg-presence-busy", glowClass: "presence-glow-busy" },
-  abwesend: { dotClass: "bg-presence-away", glowClass: "presence-glow-away" },
+/** Farb-Token aus theme.css — nie eine feste Farbe im Baustein. */
+export const PRESENCE_COLOR_VAR: Record<PresenceStatus, string> = {
+  frei: "--color-presence-free",
+  beschaeftigt: "--color-presence-busy",
+  abwesend: "--color-presence-away",
 };
 
 /**

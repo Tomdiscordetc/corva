@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useUiStore } from "@/store/ui";
 import { Avatar } from "@/components/ui/Avatar";
-import { PresenceAvatar, PresenceDot } from "@/components/ui/PresenceDot";
+import { PresenceAvatar } from "@/components/ui/PresenceDot";
 import { presenceFromLabel } from "@/lib/presence";
 import { usePresenceStore } from "@/store/presence";
 import { getNavItems } from "./navItems";
@@ -86,8 +86,7 @@ export function ContextPanel() {
                           </PresenceAvatar>
                           <div className="min-w-0">
                             <p className="truncate text-xs font-medium text-text">{member.name}</p>
-                            <p className="flex items-center gap-1.5 truncate text-2xs text-text-faint">
-                              <PresenceDot status={status} />
+                            <p className="truncate text-2xs text-text-faint">
                               {isSelf ? t(`presence.short${status[0]!.toUpperCase()}${status.slice(1)}`) : member.status}
                             </p>
                           </div>
