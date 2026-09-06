@@ -329,5 +329,122 @@
     "shortAbwesend": "Abwesend",
     "label": "Mein Status",
     "teamHeading": "Team"
+  },
+  "contacts": {
+    "title": "Kontakte",
+    "subtitle": "Anfragen, Beratungen und Bestandskunden deiner Agentur.",
+    "demoNotice": "Beispielkontakte — noch nicht mit dem Server verbunden",
+    "localHint": "Kontakte liegen bis zum Server-Abschnitt nur auf diesem Gerät.",
+    "new": "Neuer Kontakt",
+    "search": "Name, Ort, E-Mail oder Notiz suchen …",
+    "count": "{{count}} von {{total}}",
+    "view": {
+      "label": "Ansicht",
+      "table": "Tabelle",
+      "cards": "Karten",
+      "pipeline": "Pipeline"
+    },
+    "stage": {
+      "label": "Status",
+      "alle": "Alle Stufen",
+      "neu": "Neu",
+      "kontaktiert": "Kontaktiert",
+      "beratung": "Beratung",
+      "angebot": "Angebot",
+      "abschluss": "Abschluss",
+      "verloren": "Verloren"
+    },
+    "branch": {
+      "label": "Sparte",
+      "alle": "Alle Sparten",
+      "kfz": "Kfz",
+      "haftpflicht": "Haftpflicht",
+      "hausrat": "Hausrat",
+      "wohngebaeude": "Wohngebäude",
+      "leben": "Leben",
+      "kranken": "Kranken",
+      "berufsunfaehigkeit": "Berufsunfähigkeit",
+      "rechtsschutz": "Rechtsschutz",
+      "unfall": "Unfall"
+    },
+    "assignee": {
+      "label": "Zuständig",
+      "alle": "Ganzes Team"
+    },
+    "sort": {
+      "label": "Sortierung",
+      "zuletzt": "Letzter Kontakt",
+      "name": "Nachname",
+      "angelegt": "Zuletzt angelegt",
+      "stufe": "Pipeline-Stufe"
+    },
+    "source": {
+      "label": "Herkunft",
+      "email": "E-Mail",
+      "telefon": "Telefon",
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram",
+      "meta": "Meta",
+      "tiktok": "TikTok"
+    },
+    "column": {
+      "name": "Name",
+      "stage": "Status",
+      "branches": "Sparten",
+      "assignee": "Zuständig",
+      "lastContact": "Letzter Kontakt"
+    },
+    "field": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram",
+      "city": "Ort",
+      "notes": "Notiz",
+      "notesPlaceholder": "Worum geht es? Was ist beim nächsten Kontakt wichtig?"
+    },
+    "validation": {
+      "lastNameRequired": "Bitte gib mindestens den Nachnamen an.",
+      "emailInvalid": "Diese E-Mail-Adresse sieht nicht gültig aus.",
+      "phoneInvalid": "Bitte nur Ziffern, Leerzeichen und + verwenden.",
+      "contactWayRequired": "Mindestens ein Kontaktweg wird gebraucht: E-Mail, Telefon oder WhatsApp.",
+      "branchRequired": "Bitte wähle mindestens eine Sparte."
+    },
+    "dialog": {
+      "createTitle": "Neuer Kontakt",
+      "createDescription": "Lege eine neue Anfrage oder einen Bestandskunden an.",
+      "editTitle": "Kontakt bearbeiten",
+      "editDescription": "Änderungen werden sofort übernommen.",
+      "create": "Kontakt anlegen",
+      "save": "Änderungen speichern"
+    },
+    "row": {
+      "open": "Akte öffnen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "actions": "Aktionen zum Kontakt",
+      "moveTo": "Auf Stufe setzen",
+      "never": "Noch kein Kontakt",
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "daysAgo": "vor {{days}} Tagen",
+      "stale": "Liegt seit {{days}} Tagen"
+    },
+    "empty": {
+      "all": "Noch keine Kontakte angelegt.",
+      "filtered": "Kein Kontakt passt zu Suche und Filtern.",
+      "action": "Ersten Kontakt anlegen",
+      "reset": "Filter zurücksetzen"
+    },
+    "toast": {
+      "created": "Kontakt angelegt",
+      "updated": "Kontakt gespeichert",
+      "deleted": "Kontakt gelöscht",
+      "undo": "Rückgängig",
+      "restored": "Kontakt wiederhergestellt",
+      "moved": "Auf „{{stage}}“ gesetzt"
+    }
   }
 }
