@@ -96,7 +96,12 @@ export function ContextPanel() {
                   </ul>
                 </div>
               </motion.div>
-            ) : (
+            ) : SERVER_MODE ? null : (
+              /*
+                Der Hinweis gilt nur der Demo-Fassung. Im Server-Modus stehen
+                Kontakte und Aufgaben echt in der Datenbank — dort wäre er
+                schlicht falsch.
+              */
               <motion.p
                 key="generic"
                 initial={{ opacity: 0 }}
