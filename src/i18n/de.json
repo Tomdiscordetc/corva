@@ -246,6 +246,7 @@
     "subtitle": "Wiedervorlagen, Rückrufe und Termine deines Teams.",
     "demoNotice": "Beispielaufgaben — noch nicht mit dem Server verbunden",
     "localHint": "Aufgaben liegen bis zum Server-Abschnitt nur auf diesem Gerät.",
+    "serverHint": "Aufgaben liegen beim Mandanten und sind für dein Team sichtbar.",
     "new": "Neue Aufgabe",
     "search": "Aufgaben durchsuchen …",
     "scope": {

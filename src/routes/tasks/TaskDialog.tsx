@@ -3,7 +3,7 @@ import { Dialog, DialogContent } from "@/components/ui/Dialog";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
-import { TASK_ASSIGNEES, TASK_PRIORITIES, type Task, type TaskPriority } from "@/demo/tasks";
+import { TASK_PRIORITIES, type Task, type TaskPriority } from "@/demo/tasks";
 import type { TaskDraft } from "@/hooks/useTasks";
 import { t } from "@/i18n";
 
@@ -14,6 +14,8 @@ interface TaskDialogProps {
   task?: Task | null;
   onSubmit: (draft: TaskDraft) => void;
   defaultAssignee: string;
+  /** Wer im Team zur Auswahl steht — im Server-Modus die echten Konten. */
+  assignees: string[];
 }
 
 interface FormState {
@@ -57,7 +59,7 @@ export function validateTaskForm(form: FormState): FieldErrors {
   return errors;
 }
 
-export function TaskDialog({ open, onOpenChange, task, onSubmit, defaultAssignee }: TaskDialogProps) {
+export function TaskDialog({ open, onOpenChange, task, onSubmit, defaultAssignee, assignees }: TaskDialogProps) {
   const isEdit = !!task;
   const [form, setForm] = useState<FormState>(() => emptyForm(defaultAssignee));
   /** Erst nach der ersten Berührung meckern, nicht schon beim Öffnen. */
@@ -167,7 +169,7 @@ export function TaskDialog({ open, onOpenChange, task, onSubmit, defaultAssignee
               label={t("tasks.assignee.label")}
               value={form.assignee}
               onChange={(event) => change("assignee", event.target.value)}
-              options={TASK_ASSIGNEES.map((name) => ({ value: name, label: name }))}
+              options={assignees.map((name) => ({ value: name, label: name }))}
             />
           </div>
 

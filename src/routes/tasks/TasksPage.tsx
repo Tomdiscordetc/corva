@@ -8,8 +8,8 @@ import { StatusPill } from "@/components/ui/StatusPill";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { toast } from "@/components/ui/Toast";
 import { useTasks } from "@/hooks/useTasks";
-import { useAuthStore } from "@/store/auth";
-import { TASK_ASSIGNEES, type Task } from "@/demo/tasks";
+import { SERVER_MODE, useAuthStore } from "@/store/auth";
+import { type Task } from "@/demo/tasks";
 import type { TaskScope, TaskSort } from "@/lib/taskFilters";
 import { TaskRow } from "./TaskRow";
 import { TaskDialog } from "./TaskDialog";
@@ -24,9 +24,8 @@ export function TasksPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Task | null>(null);
 
-  const defaultAssignee = TASK_ASSIGNEES.includes(user?.name as (typeof TASK_ASSIGNEES)[number])
-    ? user!.name
-    : TASK_ASSIGNEES[0];
+  const assignees = tasks.assignees.length > 0 ? tasks.assignees : [user?.name ?? "Team"];
+  const defaultAssignee = assignees.includes(user?.name ?? "") ? user!.name : assignees[0]!;
 
   function openCreate() {
     setEditing(null);
@@ -128,7 +127,7 @@ export function TasksPage() {
           onChange={(event) => tasks.setFilter({ ...tasks.filter, assignee: event.target.value })}
           options={[
             { value: "alle", label: t("tasks.assignee.alle") },
-            ...TASK_ASSIGNEES.map((name) => ({ value: name, label: name })),
+            ...assignees.map((name) => ({ value: name, label: name })),
           ]}
         />
         <Select
@@ -167,13 +166,14 @@ export function TasksPage() {
         </ul>
       )}
 
-      <p className="text-2xs text-text-faint">{t("tasks.localHint")}</p>
+      <p className="text-2xs text-text-faint">{t(SERVER_MODE ? "tasks.serverHint" : "tasks.localHint")}</p>
 
       <TaskDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         task={editing}
         defaultAssignee={defaultAssignee}
+        assignees={assignees}
         onSubmit={(draft) => {
           if (editing) {
             tasks.update(editing.id, draft);
