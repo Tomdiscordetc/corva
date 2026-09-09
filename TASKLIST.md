@@ -105,27 +105,34 @@ Live-Validierung in der Kontaktakte.
 - [ ] Kalender (Standardansicht: Woche)
 - [x] Aufgaben (2026-09-05): anlegen, bearbeiten, abhaken, löschen mit
       Rückgängig, Bereiche mit Zählern, Suche, Filter, Sortierung,
-      Rechtsklick-Menü, Wischgeste; Bestand im lokalen Speicher
+      Rechtsklick-Menü, Wischgeste; Bestand seit 2026-09-09 auf dem Server
 - [ ] Auswertung (Kennzahlen + wählbarer Vergleichszeitraum, Diagramme
       interaktiv mit Hover-Tooltip)
 - [x] Einstellungen (2026-09-04/05): Erscheinungsbild, Benachrichtigungen,
       Konto; im Server-Modus gegen echte Endpunkte
 - [ ] Team (noch ohne Route)
 
-Offen aus der Musterliste bleibt nur noch das optimistische Speichern gegen
-den echten Server — lokal ist jede Änderung ohnehin sofort da.
+Optimistisches Speichern gegen den echten Server läuft seit 2026-09-09 für
+Kontakte und Aufgaben: die Oberfläche zeigt die Änderung sofort, der Server
+bestätigt sie, und bei einem Fehlschlag wird der Stand vom Server neu geholt.
 
-## Abschnitt 3 — Server-Fundament (offen)
+## Abschnitt 3 — Server-Fundament
 
-- [ ] Datenbank, Mandanten (tenant_id)
-- [ ] Echte Anmeldung, Sessions
-- [ ] Die vier Rollen serverseitig durchgesetzt
-- [ ] Protokoll (wer sah/änderte was, wann)
+- [x] Datenbank, Mandanten (tenant_id) (2026-09-08): SQLite über node:sqlite,
+      Migrationen über PRAGMA user_version
+- [x] Echte Anmeldung, Sessions (2026-09-08): Passworthash, TOTP,
+      Sitzungstabelle, CSRF, Ratenbegrenzung
+- [ ] Die vier Rollen serverseitig durchgesetzt — der Server kennt bisher drei
+      (admin, manager, employee); Inhaber fehlt noch
+- [x] Protokoll (wer sah/änderte was, wann) (2026-09-08): audit-Tabelle
 
-## Abschnitt 4 — Fachlichkeit (offen)
+## Abschnitt 4 — Fachlichkeit
 
-- [ ] Kontakte, Pipeline, Termine, Aufgaben, Aktivitäten — echte Daten statt
-      Demo (Tausch in `src/hooks/`, Komponenten bleiben unverändert)
+- [x] Kontakte, Pipeline, Aufgaben, Aktivitäten (2026-09-09): echte Daten je
+      Mandant, Sichtbarkeit nach Rolle, Löschen bleibt 30 Tage umkehrbar.
+      Getauscht wurden nur `useContacts` und `useTasks` — die Bildschirme
+      blieben unverändert.
+- [ ] Termine — kommt mit dem Kalender
 
 ## Abschnitt 5 — Kanäle (offen, in dieser Reihenfolge)
 
