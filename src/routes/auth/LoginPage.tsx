@@ -1,13 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
-import { Monitor, Moon, Sun } from "lucide-react";
+import { ArrowUpRight, AtSign, MessageCircle, Monitor, Moon, Pause, Phone, Play, Radio, Sun } from "lucide-react";
 import { SERVER_MODE, useAuthStore } from "@/store/auth";
 import { ServerSession } from "@/components/system/ServerSession";
 import { useThemeStore, type ThemeChoice } from "@/store/theme";
 import { LogoLockup } from "@/components/shell/Logo";
 import { cn } from "@/lib/cn";
 import { AuthVisual, AUTH_SEQUENCE_MS, type AuthPhase } from "./AuthVisual";
+import { LoginScene } from "./LoginScene";
 import { IdentifyStep } from "./steps/IdentifyStep";
 import { PasswordStep } from "./steps/PasswordStep";
 import { TwoFactorStep } from "./steps/TwoFactorStep";
@@ -32,6 +33,7 @@ const STEP_VIEWS = {
 } as const;
 
 export function LoginPage() {
+  const [scenePaused, setScenePaused] = useState(false);
   const status = useAuthStore((s) => s.status);
   const checked = useAuthStore((s) => s.checked);
   const freshLogin = useAuthStore((s) => s.freshLogin);
@@ -96,182 +98,122 @@ export function LoginPage() {
   if (!checked || resetToken) return <ServerSession />;
 
   return (
-    <main className="relative min-h-dvh overflow-hidden bg-surface-sunken">
-      <div aria-hidden className="auth-page-glow pointer-events-none absolute inset-0" />
+    <main className="auth-login" data-login-theme={theme} data-phase={visualPhase}>
+      <LoginScene phase={visualPhase} paused={scenePaused} />
+      <div className="auth-scene-vignette" aria-hidden />
 
-      <motion.div
-        initial={false}
-        animate={{ opacity: authFlowActive ? 0 : 1, y: authFlowActive ? -8 : 0 }}
-        transition={{ duration: reduceMotion ? 0 : 0.38 }}
-        className="absolute top-4 right-4 z-20 flex rounded-md border border-line bg-surface-overlay p-1 shadow-[var(--shadow-soft)] backdrop-blur-md"
-        role="group"
-        aria-label={t("topbar.theme")}
-        style={{ pointerEvents: authFlowActive ? "none" : "auto" }}
-      >
-        {THEME_OPTIONS.map(({ value, Icon, labelKey }) => (
-          <button
-            key={value}
-            type="button"
-            onClick={() => setTheme(value)}
-            aria-label={t(labelKey)}
-            aria-pressed={theme === value}
-            title={t(labelKey)}
-            className="flex size-8 items-center justify-center rounded-sm text-text-faint transition-colors duration-[var(--t-fast)] hover:text-text aria-pressed:bg-surface-raised aria-pressed:text-text aria-pressed:shadow-[var(--shadow-soft)]"
-          >
-            <Icon className="size-3.5" />
-          </button>
-        ))}
-      </motion.div>
-
-      <div className="relative mx-auto min-h-dvh w-full">
-        {/*
-          Während der Anmeldung wird das Markenfeld zur Bühne: es bleibt
-          stehen, wächst auf die volle Breite und spielt die Kette ab. Auf
-          schmalen Bildschirmen gibt es sonst kein Panel — dort tritt es für
-          die Dauer der Anmeldung an die Stelle des Formulars.
-        */}
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, x: -18 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.9, ease: [0.32, 0.72, 0, 1] }}
-          className={cn(
-            "absolute inset-y-0 left-0 p-3",
-            "transition-[width] duration-[var(--t-auth-swipe)] ease-[var(--ease-standard)]",
-            authFlowActive ? "z-10 w-full" : "hidden w-1/2 lg:block",
-          )}
-        >
-          <section className="relative flex size-full min-h-0 flex-col overflow-hidden rounded-xl bg-auth-brand p-10 text-on-auth-brand">
-            <div aria-hidden className="auth-brand-grid pointer-events-none absolute inset-0 opacity-35" />
-            <div aria-hidden className="auth-brand-glow pointer-events-none absolute inset-0" />
-
-            <LogoLockup className="relative z-10 text-on-auth-brand" markClassName="text-on-auth-brand" />
-
-            <div className="relative z-10 my-auto flex flex-col items-center py-8 text-center">
-              <motion.div
-                animate={{ opacity: authFlowActive ? 0 : 1, y: authFlowActive ? -6 : 0 }}
-                transition={{ duration: reduceMotion ? 0 : 0.4 }}
+      <header className="auth-login-header">
+        <Link to="/login" aria-label="Corva" className="auth-login-wordmark">
+          <LogoLockup />
+        </Link>
+        <div className="auth-login-controls" inert={authFlowActive}>
+          <span className="auth-login-header-caption">{t("auth.login.eyebrow")}</span>
+          <div className="auth-theme-switch" role="group" aria-label={t("topbar.theme")}>
+            {THEME_OPTIONS.map(({ value, Icon, labelKey }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setTheme(value)}
+                aria-label={t(labelKey)}
+                aria-pressed={theme === value}
+                title={t(labelKey)}
               >
-                <p className="mb-4 text-2xs font-semibold tracking-widest text-on-auth-brand/55 uppercase">
-                  {t("auth.login.eyebrow")}
-                </p>
-                <p className="max-w-lg text-2xl font-semibold tracking-tight text-on-auth-brand">
-                  {t("app.tagline")}
-                </p>
-              </motion.div>
-              <AuthVisual phase={visualPhase} />
-            </div>
+                <Icon aria-hidden />
+              </button>
+            ))}
+          </div>
+        </div>
+      </header>
 
-            <p
-              role="status"
-              className="relative z-10 flex items-center gap-2 text-xs text-on-auth-brand/55"
-            >
-              {authFlowActive && (
-                <span
-                  aria-hidden
-                  className="size-1.5 rounded-full"
-                  style={{
-                    background:
-                      visualPhase === "granted"
-                        ? "var(--color-auth-granted)"
-                        : "var(--color-auth-pending)",
-                  }}
-                />
-              )}
-              {authFlowActive
-                ? t(visualPhase === "granted" ? "auth.login.statusGranted" : "auth.login.statusChecking")
-                : t("auth.login.channels")}
-            </p>
-          </section>
-        </motion.div>
-
-        <section
-          aria-hidden={authFlowActive}
-          className={cn(
-            "relative ml-auto flex min-h-dvh w-full items-center justify-center px-5 py-20",
-            "transition-opacity duration-[var(--t-slow)] ease-[var(--ease-standard)] sm:px-10 lg:py-10 lg:w-1/2",
-            authFlowActive && "pointer-events-none opacity-0",
-          )}
-        >
-          <motion.div
-            aria-hidden
-            className="auth-unlock-field pointer-events-none absolute inset-0"
-            initial={false}
-            animate={{ opacity: authFlowActive ? 1 : 0, scale: authFlowActive ? 1 : 0.94 }}
-            transition={{ duration: reduceMotion ? 0 : 1.25, ease: [0.32, 0.72, 0, 1] }}
-          />
-          <motion.div variants={panel} initial="hidden" animate="show" className="w-full max-w-md">
-            <motion.div
-              variants={row}
-              animate={{ opacity: authFlowActive ? 0 : 1, y: authFlowActive ? -8 : 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.38 }}
-              className="mb-10 lg:hidden"
-            >
-              <LogoLockup className="text-text" />
+      <div className="auth-login-layout">
+        <section className="auth-login-story" aria-label={t("app.tagline")} inert={authFlowActive}>
+          <div className="auth-scene-caption" aria-hidden>
+            <span className="auth-scene-caption-line" />
+            <span>CORVA / CONNECTED</span>
+          </div>
+          <motion.div variants={panel} initial="hidden" animate="show" className="auth-story-copy">
+            <motion.p variants={row} className="auth-story-eyebrow">
+              <span aria-hidden />{t("auth.login.sceneEyebrow")}
+            </motion.p>
+            <motion.h2 variants={row} className="auth-story-title">
+              {t("auth.login.sceneTitle")}<br />
+              <span>{t("auth.login.sceneTitleAccent")}</span>
+            </motion.h2>
+            <motion.p variants={row} className="auth-story-description">{t("app.tagline")}.</motion.p>
+            <motion.div variants={row} className="auth-channel-list">
+              {[
+                { label: "E-Mail", Icon: AtSign },
+                { label: "Telefon", Icon: Phone },
+                { label: "WhatsApp", Icon: MessageCircle },
+                { label: "Social", Icon: Radio },
+              ].map(({ label, Icon }) => (
+                <span key={label}><Icon aria-hidden />{label}</span>
+              ))}
             </motion.div>
+          </motion.div>
+        </section>
 
-            {/*
-              Der Schrittwechsel nutzt bewusst direkte Werte statt benannter
-              Varianten: das umgebende Panel vererbt seine Variantennamen an
-              alle motion-Kinder, wodurch die Aus-Animation des Schritts
-              hängen blieb und der nächste Schritt nie erschien.
-            */}
+        <section className="auth-form-region" inert={authFlowActive} aria-hidden={authFlowActive}>
+          <motion.div variants={panel} initial="hidden" animate="show" className="auth-form-card">
+            <div className="auth-card-topline" aria-hidden>
+              <span className="auth-card-mini-mark"><ArrowUpRight /></span>
+              <span>{t("auth.login.sceneWorkspace")}</span>
+            </div>
             <AnimatePresence mode="wait" initial={false}>
               {authFlowActive ? null : (
                 <motion.div
                   key={step}
-                  initial={reduceMotion ? false : { opacity: 0, x: direction > 0 ? 34 : -34, filter: "blur(4px)" }}
-                  animate={{
-                    opacity: 1,
-                    x: 0,
-                    filter: "blur(0px)",
-                    transition: { duration: reduceMotion ? 0 : 0.42, ease: [0.32, 0.72, 0, 1] },
-                  }}
-                  exit={
-                    reduceMotion
-                      ? { opacity: 0 }
-                      : {
-                          opacity: 0,
-                          x: direction > 0 ? -34 : 34,
-                          filter: "blur(4px)",
-                          transition: { duration: 0.28, ease: [0.32, 0.72, 0, 1] },
-                        }
-                  }
+                  initial={reduceMotion ? false : { opacity: 0, x: direction > 0 ? 24 : -24 }}
+                  animate={{ opacity: 1, x: 0, transition: { duration: reduceMotion ? 0 : 0.36 } }}
+                  exit={{ opacity: 0, x: reduceMotion ? 0 : direction > 0 ? -24 : 24, transition: { duration: reduceMotion ? 0 : 0.2 } }}
                 >
                   <StepView />
                 </motion.div>
               )}
             </AnimatePresence>
-
-            {/*
-              Pflichtangaben nach § 5 DDG und Art. 13 DSGVO müssen von der
-              ersten Seite aus erreichbar sein. Während der Anmeldung treten
-              sie zurück, damit sie die Choreografie nicht stören.
-            */}
-            <motion.nav
-              aria-label={t("legal.footerLabel")}
-              initial={false}
-              animate={{ opacity: authFlowActive ? 0 : 1 }}
-              transition={{ duration: reduceMotion ? 0 : 0.38 }}
-              style={{ pointerEvents: authFlowActive ? "none" : "auto" }}
-              className="mt-10 flex items-center justify-center gap-4 text-2xs text-text-faint"
-            >
-              <Link
-                to="/impressum"
-                className="rounded-sm transition-colors duration-[var(--t-fast)] hover:text-text-muted"
-              >
-                {t("legal.imprintLink")}
-              </Link>
-              <span aria-hidden>·</span>
-              <Link
-                to="/datenschutz"
-                className="rounded-sm transition-colors duration-[var(--t-fast)] hover:text-text-muted"
-              >
-                {t("legal.privacyLink")}
-              </Link>
-            </motion.nav>
           </motion.div>
+          <nav className="auth-legal-links" aria-label={t("legal.footerLabel")}>
+            <Link to="/impressum">{t("legal.imprintLink")}</Link>
+            <span aria-hidden>·</span>
+            <Link to="/datenschutz">{t("legal.privacyLink")}</Link>
+          </nav>
         </section>
       </div>
+
+      <footer className="auth-login-footer">
+        <span>{t("auth.login.sceneFooter")}</span>
+        <button
+          type="button"
+          className="auth-motion-control"
+          onClick={() => setScenePaused((value) => !value)}
+          aria-pressed={scenePaused || !!reduceMotion}
+          disabled={!!reduceMotion}
+          aria-label={t(reduceMotion ? "auth.login.sceneReduced" : scenePaused ? "auth.login.sceneResume" : "auth.login.scenePause")}
+        >
+          {scenePaused || reduceMotion ? <Play aria-hidden /> : <Pause aria-hidden />}
+          {t(reduceMotion ? "auth.login.sceneReduced" : scenePaused ? "auth.login.sceneResume" : "auth.login.scenePause")}
+        </button>
+      </footer>
+
+      <AnimatePresence>
+        {authFlowActive && (
+          <motion.section
+            key="auth-unlock"
+            className="auth-login-unlock"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.5 }}
+            aria-label={t(visualPhase === "granted" ? "auth.login.statusGranted" : "auth.login.statusChecking")}
+          >
+            <AuthVisual phase={visualPhase} />
+            <p role="status" className={cn("auth-unlock-status", visualPhase === "granted" && "auth-unlock-status-granted")}>
+              <span aria-hidden />
+              {t(visualPhase === "granted" ? "auth.login.statusGranted" : "auth.login.statusChecking")}
+            </p>
+          </motion.section>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

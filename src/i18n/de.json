@@ -5,6 +5,14 @@
   },
   "auth": {
     "login": {
+      "sceneEyebrow": "Dein Netzwerk. Ein Arbeitsbereich.",
+      "sceneTitle": "Alles verbunden.",
+      "sceneTitleAccent": "Alles im Blick.",
+      "sceneWorkspace": "DEIN ARBEITSBEREICH",
+      "sceneFooter": "Gute Verbindungen beginnen hier.",
+      "scenePause": "Animation pausieren",
+      "sceneResume": "Animation fortsetzen",
+      "sceneReduced": "Bewegung reduziert",
       "title": "Anmelden",
       "subtitle": "Melde dich mit deinem Firmenkonto an und mach dort weiter, wo du aufgehört hast.",
       "eyebrow": "CRM für Vermittlerteams",
