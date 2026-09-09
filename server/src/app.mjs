@@ -101,6 +101,11 @@ export async function createCorvaServer(config, { db = openDatabase(config.datab
     db.prepare('DELETE FROM sessions WHERE expires_at <= ?').run(now());
     db.prepare('DELETE FROM challenges WHERE expires_at <= ?').run(now());
     db.prepare('DELETE FROM password_resets WHERE expires_at <= ?').run(now());
+    // Endgültig löschen, was 30 Tage im Papierkorb lag — Aufbewahrung ohne
+    // Zweck wäre nach DSGVO nicht zu rechtfertigen.
+    const purgeBefore = now() - 30 * 86400000;
+    db.prepare('DELETE FROM contacts WHERE deleted_at IS NOT NULL AND deleted_at <= ?').run(purgeBefore);
+    db.prepare('DELETE FROM tasks WHERE deleted_at IS NOT NULL AND deleted_at <= ?').run(purgeBefore);
     for (const [rateKey, entry] of rates) if (entry.until <= now()) rates.delete(rateKey);
   }
   function rate(id, max, windowMs = 15 * 60000) {
@@ -212,10 +217,12 @@ export async function createCorvaServer(config, { db = openDatabase(config.datab
 
   function visibleContacts(user) {
     return seesAll(user)
-      ? db.prepare('SELECT * FROM contacts WHERE tenant_id=? ORDER BY updated_at DESC LIMIT 2000').all(user.tenant_id)
-      : db.prepare('SELECT * FROM contacts WHERE tenant_id=? AND assignee_id=? ORDER BY updated_at DESC LIMIT 2000').all(user.tenant_id, user.id);
+      ? db.prepare('SELECT * FROM contacts WHERE tenant_id=? AND deleted_at IS NULL ORDER BY updated_at DESC LIMIT 2000').all(user.tenant_id)
+      : db.prepare('SELECT * FROM contacts WHERE tenant_id=? AND assignee_id=? AND deleted_at IS NULL ORDER BY updated_at DESC LIMIT 2000').all(user.tenant_id, user.id);
   }
-  const contactRow = (user, id) => db.prepare('SELECT * FROM contacts WHERE id=? AND tenant_id=?').get(id, user.tenant_id);
+  const contactRow = (user, id) => db.prepare('SELECT * FROM contacts WHERE id=? AND tenant_id=? AND deleted_at IS NULL').get(id, user.tenant_id);
+  /** Auch im Papierkorb suchen — nur fürs Wiederherstellen. */
+  const contactRowAny = (user, id) => db.prepare('SELECT * FROM contacts WHERE id=? AND tenant_id=?').get(id, user.tenant_id);
   const contactView = (row) => ({
     id: row.id,
     firstName: row.first_name,
@@ -272,10 +279,11 @@ export async function createCorvaServer(config, { db = openDatabase(config.datab
 
   function visibleTasks(user) {
     return seesAll(user)
-      ? db.prepare('SELECT * FROM tasks WHERE tenant_id=? ORDER BY done, due_date, due_time LIMIT 2000').all(user.tenant_id)
-      : db.prepare('SELECT * FROM tasks WHERE tenant_id=? AND assignee_id=? ORDER BY done, due_date, due_time LIMIT 2000').all(user.tenant_id, user.id);
+      ? db.prepare('SELECT * FROM tasks WHERE tenant_id=? AND deleted_at IS NULL ORDER BY done, due_date, due_time LIMIT 2000').all(user.tenant_id)
+      : db.prepare('SELECT * FROM tasks WHERE tenant_id=? AND assignee_id=? AND deleted_at IS NULL ORDER BY done, due_date, due_time LIMIT 2000').all(user.tenant_id, user.id);
   }
-  const taskRow = (user, id) => db.prepare('SELECT * FROM tasks WHERE id=? AND tenant_id=?').get(id, user.tenant_id);
+  const taskRow = (user, id) => db.prepare('SELECT * FROM tasks WHERE id=? AND tenant_id=? AND deleted_at IS NULL').get(id, user.tenant_id);
+  const taskRowAny = (user, id) => db.prepare('SELECT * FROM tasks WHERE id=? AND tenant_id=?').get(id, user.tenant_id);
   const taskView = (row) => {
     const contact = row.contact_id ? db.prepare('SELECT first_name,last_name FROM contacts WHERE id=?').get(row.contact_id) : null;
     return {
@@ -538,7 +546,7 @@ export async function createCorvaServer(config, { db = openDatabase(config.datab
       object(input, []);
       const existing = contactRow(user, path.split('/').at(-1)) || fail(404, 'Kontakt nicht gefunden.');
       requireAccess(user, existing.assignee_id);
-      db.prepare('DELETE FROM contacts WHERE id=? AND tenant_id=?').run(existing.id, user.tenant_id);
+      db.prepare('UPDATE contacts SET deleted_at=?,updated_at=? WHERE id=? AND tenant_id=?').run(now(), now(), existing.id, user.tenant_id);
       audit(user, 'contact.deleted');
       return json(res, { ok: true });
     }
@@ -569,6 +577,15 @@ export async function createCorvaServer(config, { db = openDatabase(config.datab
       audit(user, 'contact.activity_logged');
       const row = db.prepare('SELECT * FROM contact_activities WHERE id=? AND tenant_id=?').get(id, user.tenant_id);
       return json(res, { activity: activityView(row), contact: contactView(contactRow(user, existing.id)) }, 201);
+    }
+
+    if (req.method === 'POST' && /^\/api\/contacts\/[^/]+\/restore$/.test(path)) {
+      object(input, []);
+      const existing = contactRowAny(user, path.split('/')[3]) || fail(404, 'Kontakt nicht gefunden.');
+      requireAccess(user, existing.assignee_id);
+      db.prepare('UPDATE contacts SET deleted_at=NULL,updated_at=? WHERE id=? AND tenant_id=?').run(now(), existing.id, user.tenant_id);
+      audit(user, 'contact.restored');
+      return json(res, { contact: contactView(contactRow(user, existing.id)) });
     }
 
     // ---- Aufgaben -------------------------------------------------------
@@ -602,9 +619,18 @@ export async function createCorvaServer(config, { db = openDatabase(config.datab
       object(input, []);
       const existing = taskRow(user, path.split('/').at(-1)) || fail(404, 'Aufgabe nicht gefunden.');
       requireAccess(user, existing.assignee_id);
-      db.prepare('DELETE FROM tasks WHERE id=? AND tenant_id=?').run(existing.id, user.tenant_id);
+      db.prepare('UPDATE tasks SET deleted_at=?,updated_at=? WHERE id=? AND tenant_id=?').run(now(), now(), existing.id, user.tenant_id);
       audit(user, 'task.deleted');
       return json(res, { ok: true });
+    }
+
+    if (req.method === 'POST' && /^\/api\/tasks\/[^/]+\/restore$/.test(path)) {
+      object(input, []);
+      const existing = taskRowAny(user, path.split('/')[3]) || fail(404, 'Aufgabe nicht gefunden.');
+      requireAccess(user, existing.assignee_id);
+      db.prepare('UPDATE tasks SET deleted_at=NULL,updated_at=? WHERE id=? AND tenant_id=?').run(now(), existing.id, user.tenant_id);
+      audit(user, 'task.restored');
+      return json(res, { task: taskView(taskRow(user, existing.id)) });
     }
 
     if (req.method === 'GET' && path === '/api/connections') return json(res, { emailAvailable: mailAvailable, connections: [

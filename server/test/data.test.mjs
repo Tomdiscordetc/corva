@@ -231,6 +231,39 @@ test('trennt Aufgaben zwischen Mandanten', async () => {
   assert.equal((await request(`/api/tasks/${created.body.task.id}`, { method: 'DELETE', body: {}, as: 'fremd' })).status, 404);
 });
 
+test('holt einen gelöschten Kontakt samt Verlauf zurück', async () => {
+  const created = await request('/api/contacts', { method: 'POST', body: musterKontakt, as: 'chefin' });
+  const id = created.body.contact.id;
+  await request(`/api/contacts/${id}/activities`, {
+    method: 'POST',
+    body: { channel: 'telefon', direction: 'ausgehend', description: 'Erstgespräch' },
+    as: 'chefin',
+  });
+
+  await request(`/api/contacts/${id}`, { method: 'DELETE', body: {}, as: 'chefin' });
+  assert.equal((await request('/api/contacts', { as: 'chefin' })).body.contacts.length, 0);
+
+  const restored = await request(`/api/contacts/${id}/restore`, { method: 'POST', body: {}, as: 'chefin' });
+  assert.equal(restored.status, 200);
+  assert.equal(restored.body.contact.id, id);
+  // Entscheidend: Der Verlauf darf beim Löschen nicht mitgerissen werden.
+  const history = await request(`/api/contacts/${id}/activities`, { as: 'chefin' });
+  assert.equal(history.body.activities.length, 1);
+  assert.equal(history.body.activities[0].description, 'Erstgespräch');
+});
+
+test('holt eine gelöschte Aufgabe zurück', async () => {
+  const created = await request('/api/tasks', { method: 'POST', body: { title: 'Wiedervorlage', priority: 'hoch' }, as: 'chefin' });
+  const id = created.body.task.id;
+
+  await request(`/api/tasks/${id}`, { method: 'DELETE', body: {}, as: 'chefin' });
+  assert.equal((await request('/api/tasks', { as: 'chefin' })).body.tasks.length, 0);
+
+  const restored = await request(`/api/tasks/${id}/restore`, { method: 'POST', body: {}, as: 'chefin' });
+  assert.equal(restored.body.task.title, 'Wiedervorlage');
+  assert.equal((await request('/api/tasks', { as: 'chefin' })).body.tasks.length, 1);
+});
+
 test('schreibt jede Änderung ins Protokoll', async () => {
   const before = db.prepare("SELECT COUNT(*) AS n FROM audit WHERE action LIKE 'contact.%'").get().n;
   const created = await request('/api/contacts', { method: 'POST', body: musterKontakt, as: 'chefin' });

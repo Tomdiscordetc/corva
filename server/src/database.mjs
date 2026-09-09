@@ -13,7 +13,7 @@ export function openDatabase(filename) {
   const db = new DatabaseSync(filename, { timeout: 5000 });
   db.exec('PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;');
   const version = db.prepare('PRAGMA user_version').get().user_version;
-  if (version > 2) throw new Error('Database schema is newer than this server.');
+  if (version > 3) throw new Error('Database schema is newer than this server.');
   if (version === 0) db.exec(`
     BEGIN IMMEDIATE;
     CREATE TABLE tenants (id TEXT PRIMARY KEY, name TEXT NOT NULL, created_at INTEGER NOT NULL);
@@ -81,6 +81,17 @@ export function openDatabase(filename) {
     CREATE INDEX tasks_tenant ON tasks(tenant_id, done, due_date);
     CREATE INDEX tasks_assignee ON tasks(tenant_id, assignee_id);
     PRAGMA user_version=2;
+    COMMIT;
+  `);
+  if (db.prepare('PRAGMA user_version').get().user_version < 3) db.exec(`
+    BEGIN IMMEDIATE;
+    -- Gelöschtes bleibt kurz liegen, damit „Rückgängig" den Verlauf nicht
+    -- mitreißt. Der Papierkorb wird nach 30 Tagen selbsttätig geleert.
+    ALTER TABLE contacts ADD COLUMN deleted_at INTEGER;
+    ALTER TABLE tasks ADD COLUMN deleted_at INTEGER;
+    CREATE INDEX contacts_deleted ON contacts(deleted_at);
+    CREATE INDEX tasks_deleted ON tasks(deleted_at);
+    PRAGMA user_version=3;
     COMMIT;
   `);
   return db;
