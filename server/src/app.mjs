@@ -11,6 +11,41 @@ const publicUser = (row) => ({ id: row.id, tenantId: row.tenant_id, name: row.na
 const iso = (value) => new Date(value).toISOString();
 const CATEGORIES = ['inquiries', 'assignments', 'appointments', 'summary'];
 const PASSWORD_ERROR = 'Das Passwort muss zwischen 12 und 128 Zeichen lang sein.';
+const STAGES = ['neu', 'kontaktiert', 'beratung', 'angebot', 'abschluss', 'verloren'];
+const CHANNELS = ['email', 'telefon', 'whatsapp', 'instagram', 'meta', 'tiktok'];
+const BRANCHES = ['kfz', 'haftpflicht', 'hausrat', 'wohngebaeude', 'leben', 'kranken', 'berufsunfaehigkeit', 'rechtsschutz', 'unfall'];
+const PRIORITIES = ['hoch', 'mittel', 'niedrig'];
+const DIRECTIONS = ['eingehend', 'ausgehend'];
+
+/** Optionales Textfeld: fehlt es, bleibt der bisherige Wert. */
+function optionalText(input, field, max, fallback = '') {
+  if (!(field in input)) return fallback;
+  if (typeof input[field] !== 'string' || input[field].length > max) fail(400, 'Ungültige Eingabe.');
+  return input[field].trim();
+}
+function oneOf(value, allowed, message) {
+  if (!allowed.includes(value)) fail(400, message);
+  return value;
+}
+/** Datum als YYYY-MM-DD, leer erlaubt (Aufgabe ohne Termin). */
+function dateOnly(value) {
+  if (value === '') return '';
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(Date.parse(value))) {
+    fail(400, 'Bitte ein gültiges Datum angeben.');
+  }
+  return value;
+}
+function timeOnly(value) {
+  if (value === '') return '';
+  if (typeof value !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(value)) fail(400, 'Bitte eine gültige Uhrzeit angeben.');
+  return value;
+}
+function branchList(value) {
+  if (!Array.isArray(value) || value.length > BRANCHES.length) fail(400, 'Ungültige Sparten.');
+  const unique = [...new Set(value)];
+  for (const entry of unique) oneOf(entry, BRANCHES, 'Ungültige Sparte.');
+  return JSON.stringify(unique);
+}
 function object(value, keys) {
   if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).some((key) => !keys.includes(key))) fail(400, 'Ungültige Angaben.');
   return value;
@@ -148,6 +183,147 @@ export async function createCorvaServer(config, { db = openDatabase(config.datab
     catch { fail(502, 'Die E-Mail konnte nicht versendet werden. Bitte die Server-Konfiguration prüfen lassen.'); }
   }
   const json = (res, value, status = 200) => { res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' }); res.end(JSON.stringify(value)); };
+
+  /*
+    Sichtbarkeit: Mitarbeitende sehen, wofür sie zuständig sind; Teamleitung
+    und Verwaltung sehen den ganzen Mandanten. Eine feinere Teamstruktur gibt
+    es noch nicht — sobald sie kommt, greift sie genau hier.
+  */
+  const seesAll = (user) => user.role === 'admin' || user.role === 'manager';
+  function requireAccess(user, assigneeId) {
+    if (!seesAll(user) && assigneeId !== user.id) fail(403, 'Dafür fehlt die Berechtigung.');
+  }
+  /** Alle Namen im Mandanten — die Oberfläche arbeitet mit Namen, nicht mit Kennungen. */
+  function assignees(user) {
+    return db.prepare('SELECT id,name FROM users WHERE tenant_id=? ORDER BY name').all(user.tenant_id)
+      .map((row) => ({ id: row.id, name: row.name }));
+  }
+  function resolveAssignee(user, value, fallback) {
+    if (value === undefined) return fallback ?? user.id;
+    if (value === null || value === '') return null;
+    string(value, 1, 200);
+    const found = db.prepare('SELECT id FROM users WHERE tenant_id=? AND (id=? OR name=?)').get(user.tenant_id, value, value);
+    if (!found) fail(400, 'Diese Zuständigkeit gibt es im Team nicht.');
+    // Mitarbeitende dürfen nichts an andere übergeben, sonst wäre es weg.
+    if (!seesAll(user) && found.id !== user.id) fail(403, 'Zuständigkeiten dürfen nur von der Leitung vergeben werden.');
+    return found.id;
+  }
+  const nameOf = (id) => (id ? db.prepare('SELECT name FROM users WHERE id=?').get(id)?.name ?? '' : '');
+
+  function visibleContacts(user) {
+    return seesAll(user)
+      ? db.prepare('SELECT * FROM contacts WHERE tenant_id=? ORDER BY updated_at DESC LIMIT 2000').all(user.tenant_id)
+      : db.prepare('SELECT * FROM contacts WHERE tenant_id=? AND assignee_id=? ORDER BY updated_at DESC LIMIT 2000').all(user.tenant_id, user.id);
+  }
+  const contactRow = (user, id) => db.prepare('SELECT * FROM contacts WHERE id=? AND tenant_id=?').get(id, user.tenant_id);
+  const contactView = (row) => ({
+    id: row.id,
+    firstName: row.first_name,
+    lastName: row.last_name,
+    email: row.email,
+    phone: row.phone,
+    whatsapp: row.whatsapp,
+    instagram: row.instagram,
+    city: row.city,
+    stage: row.stage,
+    branches: JSON.parse(row.branches),
+    source: row.source,
+    notes: row.notes,
+    assignee: nameOf(row.assignee_id),
+    assigneeId: row.assignee_id,
+    createdAt: iso(row.created_at),
+    lastContactAt: row.last_contact_at ? iso(row.last_contact_at) : '',
+  });
+  function contactInput(user, input, existing = null) {
+    object(input, ['firstName', 'lastName', 'email', 'phone', 'whatsapp', 'instagram', 'city', 'stage', 'branches', 'source', 'notes', 'assignee']);
+    const lastName = 'lastName' in input ? string(input.lastName, 1, 120).trim() : existing?.last_name;
+    if (!lastName) fail(400, 'Bitte mindestens den Nachnamen angeben.');
+    const email = optionalText(input, 'email', 254, existing?.email ?? '');
+    const phone = optionalText(input, 'phone', 60, existing?.phone ?? '');
+    const whatsapp = optionalText(input, 'whatsapp', 60, existing?.whatsapp ?? '');
+    // Ein Kontakt ohne Erreichbarkeit ist im Vertrieb wertlos.
+    if (!email && !phone && !whatsapp) fail(400, 'Mindestens ein Kontaktweg wird gebraucht: E-Mail, Telefon oder WhatsApp.');
+    const branches = 'branches' in input ? branchList(input.branches) : existing?.branches ?? '[]';
+    if (JSON.parse(branches).length === 0) fail(400, 'Bitte mindestens eine Sparte wählen.');
+    return {
+      firstName: optionalText(input, 'firstName', 120, existing?.first_name ?? ''),
+      lastName,
+      email,
+      phone,
+      whatsapp,
+      instagram: optionalText(input, 'instagram', 120, existing?.instagram ?? ''),
+      city: optionalText(input, 'city', 120, existing?.city ?? ''),
+      stage: 'stage' in input ? oneOf(input.stage, STAGES, 'Ungültige Pipeline-Stufe.') : existing?.stage ?? 'neu',
+      branches,
+      source: 'source' in input ? oneOf(input.source, CHANNELS, 'Ungültige Herkunft.') : existing?.source ?? 'email',
+      notes: optionalText(input, 'notes', 2000, existing?.notes ?? ''),
+      assigneeId: resolveAssignee(user, input.assignee, existing?.assignee_id),
+    };
+  }
+  const activityView = (row) => ({
+    id: row.id,
+    contactId: row.contact_id,
+    channel: row.channel,
+    direction: row.direction,
+    description: row.description,
+    author: nameOf(row.user_id),
+    timestamp: iso(row.created_at),
+  });
+
+  function visibleTasks(user) {
+    return seesAll(user)
+      ? db.prepare('SELECT * FROM tasks WHERE tenant_id=? ORDER BY done, due_date, due_time LIMIT 2000').all(user.tenant_id)
+      : db.prepare('SELECT * FROM tasks WHERE tenant_id=? AND assignee_id=? ORDER BY done, due_date, due_time LIMIT 2000').all(user.tenant_id, user.id);
+  }
+  const taskRow = (user, id) => db.prepare('SELECT * FROM tasks WHERE id=? AND tenant_id=?').get(id, user.tenant_id);
+  const taskView = (row) => {
+    const contact = row.contact_id ? db.prepare('SELECT first_name,last_name FROM contacts WHERE id=?').get(row.contact_id) : null;
+    return {
+      id: row.id,
+      title: row.title,
+      notes: row.notes,
+      dueDate: row.due_date,
+      dueTime: row.due_time,
+      priority: row.priority,
+      done: Boolean(row.done),
+      contactId: row.contact_id,
+      contactName: contact ? `${contact.first_name} ${contact.last_name}`.trim() : '',
+      assignee: nameOf(row.assignee_id),
+      assigneeId: row.assignee_id,
+      createdAt: iso(row.created_at),
+    };
+  };
+  function taskInput(user, input, existing = null) {
+    object(input, ['title', 'notes', 'dueDate', 'dueTime', 'priority', 'done', 'contactId', 'contactName', 'assignee']);
+    const title = 'title' in input ? string(input.title, 1, 120).trim() : existing?.title;
+    if (!title) fail(400, 'Bitte der Aufgabe einen Titel geben.');
+    const dueDate = 'dueDate' in input ? dateOnly(input.dueDate) : existing?.due_date ?? '';
+    const dueTime = 'dueTime' in input ? timeOnly(input.dueTime) : existing?.due_time ?? '';
+    if (dueTime && !dueDate) fail(400, 'Für eine Uhrzeit wird auch ein Datum gebraucht.');
+    if ('done' in input && typeof input.done !== 'boolean') fail(400, 'Ungültiger Erledigt-Zustand.');
+
+    // Verknüpfung wahlweise über Kennung oder Name — die Oberfläche kennt Namen.
+    let contactId = existing?.contact_id ?? null;
+    if ('contactId' in input) contactId = input.contactId ? string(input.contactId, 1, 60) : null;
+    else if ('contactName' in input) {
+      const wanted = optionalText(input, 'contactName', 240);
+      contactId = wanted
+        ? db.prepare("SELECT id FROM contacts WHERE tenant_id=? AND TRIM(first_name||' '||last_name)=?").get(user.tenant_id, wanted)?.id ?? null
+        : null;
+    }
+    if (contactId && !contactRow(user, contactId)) fail(400, 'Diesen Kontakt gibt es nicht.');
+
+    return {
+      title,
+      notes: optionalText(input, 'notes', 2000, existing?.notes ?? ''),
+      dueDate,
+      dueTime,
+      priority: 'priority' in input ? oneOf(input.priority, PRIORITIES, 'Ungültige Priorität.') : existing?.priority ?? 'mittel',
+      done: ('done' in input ? input.done : Boolean(existing?.done)) ? 1 : 0,
+      contactId,
+      assigneeId: resolveAssignee(user, input.assignee, existing?.assignee_id),
+    };
+  }
 
   async function api(req, res, path) {
     cleanup();
@@ -329,6 +505,108 @@ export async function createCorvaServer(config, { db = openDatabase(config.datab
       db.prepare('INSERT INTO notifications(id,user_id,tenant_id,category,title,body,created_at) VALUES(?,?,?,?,?,?,?)').run(randomUUID(), user.id, user.tenant_id, input.category, title, message, now());
       audit(user, 'notification.test'); return json(res, { ok: true });
     }
+    // ---- Kontakte -------------------------------------------------------
+    if (req.method === 'GET' && path === '/api/contacts') {
+      return json(res, { contacts: visibleContacts(user).map(contactView), assignees: assignees(user) });
+    }
+    if (req.method === 'POST' && path === '/api/contacts') {
+      const values = contactInput(user, input);
+      const id = randomUUID();
+      db.prepare(`INSERT INTO contacts(id,tenant_id,first_name,last_name,email,phone,whatsapp,instagram,city,stage,branches,source,notes,assignee_id,created_at,updated_at,last_contact_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULL)`).run(
+        id, user.tenant_id, values.firstName, values.lastName, values.email, values.phone, values.whatsapp,
+        values.instagram, values.city, values.stage, values.branches, values.source, values.notes, values.assigneeId,
+        now(), now(),
+      );
+      audit(user, 'contact.created');
+      return json(res, { contact: contactView(contactRow(user, id)) }, 201);
+    }
+    if (req.method === 'PATCH' && /^\/api\/contacts\/[^/]+$/.test(path)) {
+      const existing = contactRow(user, path.split('/').at(-1)) || fail(404, 'Kontakt nicht gefunden.');
+      requireAccess(user, existing.assignee_id);
+      const values = contactInput(user, input, existing);
+      db.prepare(`UPDATE contacts SET first_name=?,last_name=?,email=?,phone=?,whatsapp=?,instagram=?,city=?,stage=?,branches=?,source=?,notes=?,assignee_id=?,updated_at=?
+        WHERE id=? AND tenant_id=?`).run(
+        values.firstName, values.lastName, values.email, values.phone, values.whatsapp, values.instagram,
+        values.city, values.stage, values.branches, values.source, values.notes, values.assigneeId, now(),
+        existing.id, user.tenant_id,
+      );
+      audit(user, 'contact.updated');
+      return json(res, { contact: contactView(contactRow(user, existing.id)) });
+    }
+    if (req.method === 'DELETE' && /^\/api\/contacts\/[^/]+$/.test(path)) {
+      object(input, []);
+      const existing = contactRow(user, path.split('/').at(-1)) || fail(404, 'Kontakt nicht gefunden.');
+      requireAccess(user, existing.assignee_id);
+      db.prepare('DELETE FROM contacts WHERE id=? AND tenant_id=?').run(existing.id, user.tenant_id);
+      audit(user, 'contact.deleted');
+      return json(res, { ok: true });
+    }
+    if (req.method === 'GET' && /^\/api\/contacts\/[^/]+\/activities$/.test(path)) {
+      const existing = contactRow(user, path.split('/')[3]) || fail(404, 'Kontakt nicht gefunden.');
+      requireAccess(user, existing.assignee_id);
+      const rows = db.prepare('SELECT * FROM contact_activities WHERE tenant_id=? AND contact_id=? ORDER BY created_at DESC,id DESC LIMIT 200').all(user.tenant_id, existing.id);
+      return json(res, { activities: rows.map(activityView) });
+    }
+    if (req.method === 'POST' && /^\/api\/contacts\/[^/]+\/activities$/.test(path)) {
+      object(input, ['channel', 'direction', 'description']);
+      const existing = contactRow(user, path.split('/')[3]) || fail(404, 'Kontakt nicht gefunden.');
+      requireAccess(user, existing.assignee_id);
+      const channel = oneOf(input.channel, CHANNELS, 'Ungültiger Kontaktweg.');
+      const direction = oneOf(input.direction, DIRECTIONS, 'Ungültige Richtung.');
+      const description = string(input.description, 1, 500).trim();
+      if (!description) fail(400, 'Bitte beschreiben, was passiert ist.');
+      const id = randomUUID();
+      db.exec('BEGIN IMMEDIATE');
+      try {
+        db.prepare('INSERT INTO contact_activities(id,tenant_id,contact_id,user_id,channel,direction,description,created_at) VALUES(?,?,?,?,?,?,?,?)')
+          .run(id, user.tenant_id, existing.id, user.id, channel, direction, description, now());
+        // Der Verlaufseintrag ist zugleich der letzte Kontakt — sonst gilt der
+        // Kontakt weiter als liegengeblieben, obwohl gerade gesprochen wurde.
+        db.prepare('UPDATE contacts SET last_contact_at=?,updated_at=? WHERE id=? AND tenant_id=?').run(now(), now(), existing.id, user.tenant_id);
+        db.exec('COMMIT');
+      } catch (error) { db.exec('ROLLBACK'); throw error; }
+      audit(user, 'contact.activity_logged');
+      const row = db.prepare('SELECT * FROM contact_activities WHERE id=? AND tenant_id=?').get(id, user.tenant_id);
+      return json(res, { activity: activityView(row), contact: contactView(contactRow(user, existing.id)) }, 201);
+    }
+
+    // ---- Aufgaben -------------------------------------------------------
+    if (req.method === 'GET' && path === '/api/tasks') {
+      return json(res, { tasks: visibleTasks(user).map(taskView), assignees: assignees(user) });
+    }
+    if (req.method === 'POST' && path === '/api/tasks') {
+      const values = taskInput(user, input);
+      const id = randomUUID();
+      db.prepare(`INSERT INTO tasks(id,tenant_id,title,notes,due_date,due_time,priority,done,contact_id,assignee_id,created_at,updated_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+        id, user.tenant_id, values.title, values.notes, values.dueDate, values.dueTime, values.priority,
+        values.done, values.contactId, values.assigneeId, now(), now(),
+      );
+      audit(user, 'task.created');
+      return json(res, { task: taskView(taskRow(user, id)) }, 201);
+    }
+    if (req.method === 'PATCH' && /^\/api\/tasks\/[^/]+$/.test(path)) {
+      const existing = taskRow(user, path.split('/').at(-1)) || fail(404, 'Aufgabe nicht gefunden.');
+      requireAccess(user, existing.assignee_id);
+      const values = taskInput(user, input, existing);
+      db.prepare(`UPDATE tasks SET title=?,notes=?,due_date=?,due_time=?,priority=?,done=?,contact_id=?,assignee_id=?,updated_at=?
+        WHERE id=? AND tenant_id=?`).run(
+        values.title, values.notes, values.dueDate, values.dueTime, values.priority, values.done,
+        values.contactId, values.assigneeId, now(), existing.id, user.tenant_id,
+      );
+      audit(user, 'task.updated');
+      return json(res, { task: taskView(taskRow(user, existing.id)) });
+    }
+    if (req.method === 'DELETE' && /^\/api\/tasks\/[^/]+$/.test(path)) {
+      object(input, []);
+      const existing = taskRow(user, path.split('/').at(-1)) || fail(404, 'Aufgabe nicht gefunden.');
+      requireAccess(user, existing.assignee_id);
+      db.prepare('DELETE FROM tasks WHERE id=? AND tenant_id=?').run(existing.id, user.tenant_id);
+      audit(user, 'task.deleted');
+      return json(res, { ok: true });
+    }
+
     if (req.method === 'GET' && path === '/api/connections') return json(res, { emailAvailable: mailAvailable, connections: [
       { id: 'email', status: mailAvailable ? 'configured' : 'not_configured', message: mailAvailable ? 'SMTP-Versand ist eingerichtet. Ein Test prüft die Zustellung an Ihre Kontoadresse.' : 'Der Administrator muss SMTP auf dem Server einrichten.' },
       ...['phone','whatsapp','social'].map((id) => ({ id, status: 'not_configured', message: 'Diese Anbieteranbindung ist noch nicht implementiert.' })),

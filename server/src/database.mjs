@@ -13,7 +13,7 @@ export function openDatabase(filename) {
   const db = new DatabaseSync(filename, { timeout: 5000 });
   db.exec('PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;');
   const version = db.prepare('PRAGMA user_version').get().user_version;
-  if (version > 1) throw new Error('Database schema is newer than this server.');
+  if (version > 2) throw new Error('Database schema is newer than this server.');
   if (version === 0) db.exec(`
     BEGIN IMMEDIATE;
     CREATE TABLE tenants (id TEXT PRIMARY KEY, name TEXT NOT NULL, created_at INTEGER NOT NULL);
@@ -38,6 +38,49 @@ export function openDatabase(filename) {
     CREATE INDEX notifications_user ON notifications(user_id,tenant_id,created_at);
     CREATE TABLE audit (id TEXT PRIMARY KEY, tenant_id TEXT, user_id TEXT, action TEXT NOT NULL, created_at INTEGER NOT NULL);
     PRAGMA user_version=1;
+    COMMIT;
+  `);
+  if (db.prepare('PRAGMA user_version').get().user_version < 2) db.exec(`
+    BEGIN IMMEDIATE;
+    CREATE TABLE contacts (
+      id TEXT PRIMARY KEY, tenant_id TEXT NOT NULL REFERENCES tenants(id),
+      first_name TEXT NOT NULL DEFAULT '', last_name TEXT NOT NULL,
+      email TEXT NOT NULL DEFAULT '', phone TEXT NOT NULL DEFAULT '',
+      whatsapp TEXT NOT NULL DEFAULT '', instagram TEXT NOT NULL DEFAULT '',
+      city TEXT NOT NULL DEFAULT '',
+      stage TEXT NOT NULL CHECK(stage IN ('neu','kontaktiert','beratung','angebot','abschluss','verloren')),
+      branches TEXT NOT NULL DEFAULT '[]',
+      source TEXT NOT NULL CHECK(source IN ('email','telefon','whatsapp','instagram','meta','tiktok')),
+      notes TEXT NOT NULL DEFAULT '',
+      assignee_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+      created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, last_contact_at INTEGER
+    );
+    CREATE INDEX contacts_tenant ON contacts(tenant_id, stage);
+    CREATE INDEX contacts_assignee ON contacts(tenant_id, assignee_id);
+
+    CREATE TABLE contact_activities (
+      id TEXT PRIMARY KEY, tenant_id TEXT NOT NULL REFERENCES tenants(id),
+      contact_id TEXT NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+      user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+      channel TEXT NOT NULL CHECK(channel IN ('email','telefon','whatsapp','instagram','meta','tiktok')),
+      direction TEXT NOT NULL CHECK(direction IN ('eingehend','ausgehend')),
+      description TEXT NOT NULL, created_at INTEGER NOT NULL
+    );
+    CREATE INDEX activities_contact ON contact_activities(tenant_id, contact_id, created_at);
+
+    CREATE TABLE tasks (
+      id TEXT PRIMARY KEY, tenant_id TEXT NOT NULL REFERENCES tenants(id),
+      title TEXT NOT NULL, notes TEXT NOT NULL DEFAULT '',
+      due_date TEXT NOT NULL DEFAULT '', due_time TEXT NOT NULL DEFAULT '',
+      priority TEXT NOT NULL CHECK(priority IN ('hoch','mittel','niedrig')),
+      done INTEGER NOT NULL DEFAULT 0 CHECK(done IN (0,1)),
+      contact_id TEXT REFERENCES contacts(id) ON DELETE SET NULL,
+      assignee_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+      created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
+    );
+    CREATE INDEX tasks_tenant ON tasks(tenant_id, done, due_date);
+    CREATE INDEX tasks_assignee ON tasks(tenant_id, assignee_id);
+    PRAGMA user_version=2;
     COMMIT;
   `);
   return db;
