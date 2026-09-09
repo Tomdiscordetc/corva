@@ -5,6 +5,13 @@
   },
   "auth": {
     "login": {
+      "sceneBadge": "CORVA / CONNECTED",
+      "sceneChannel": {
+        "email": "E-Mail",
+        "phone": "Telefon",
+        "whatsapp": "WhatsApp",
+        "social": "Social"
+      },
       "sceneEyebrow": "Dein Netzwerk. Ein Arbeitsbereich.",
       "sceneTitle": "Alles verbunden.",
       "sceneTitleAccent": "Alles im Blick.",

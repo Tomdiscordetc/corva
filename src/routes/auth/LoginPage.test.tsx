@@ -32,13 +32,33 @@ function render(ui: React.ReactNode) {
 }
 
 describe("Anmeldeseite", () => {
-  it("zeigt das Markenpanel und den ersten Schritt", () => {
+  it("zeigt die Bühne, die Erzählspalte und den ersten Schritt", () => {
     const html = render(<LoginPage />);
 
     expect(html).toContain("Alle Kontaktwege an einem Ort");
+    expect(html).toContain("Alles verbunden.");
     expect(html).toContain("E-Mail-Adresse");
     expect(html).toContain("Weiter");
     expect(html).toContain('aria-label="Design"');
+  });
+
+  it("zeichnet die Bühne erst im Browser und zeigt bis dahin den Ersatz", () => {
+    const html = render(<LoginPage />);
+
+    // Ohne WebGL-Kontext bleibt es beim gemalten Ersatz — auch beim
+    // Server-Rendering, wo es noch gar kein Canvas gibt.
+    expect(html).toContain('data-renderer="fallback"');
+    expect(html).toContain("auth-scene-canvas");
+  });
+
+  it("hält keine sichtbaren Texte im Code", () => {
+    const html = render(<LoginPage />);
+
+    // Alles aus der Sprachdatei: Kennung der Bühne und die vier Kanäle.
+    expect(html).toContain("CORVA / CONNECTED");
+    expect(html).toContain("WhatsApp");
+    expect(html).toContain("Animation pausieren");
+    expect(html).not.toContain("auth.login.");
   });
 
   it("fragt im ersten Schritt nur die E-Mail ab", () => {

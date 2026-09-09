@@ -21,7 +21,8 @@ const VERTEX = `
   }
 `;
 
-// Analytic studio reflections give the metal depth without downloading an HDR map.
+// Die Spiegelungen werden gerechnet, nicht geladen — so bleibt die Tiefe im Metall
+// ohne eine einzige Fremddatei (Regel 6: nichts wird nachgeladen).
 const FRAGMENT = `
   precision highp float;
   uniform vec3 uBase;
@@ -132,7 +133,10 @@ function readColor(style: CSSStyleDeclaration, name: string, fallback: number[])
   return new Float32Array(values.length === 3 && values.every(Number.isFinite) ? values.map((v) => v / 255) : fallback.map((v) => v / 255));
 }
 
-/** Decorative, dependency-free 3D stage. Its lifetime is limited to the login route. */
+/**
+ * Dekorative 3D-Bühne ohne Bibliothek. Sie lebt nur auf der Anmeldeseite und
+ * räumt beim Verlassen alles wieder ab: Puffer, Programme und alle Melder.
+ */
 export function LoginScene({ phase, paused }: SceneControls) {
   const hostRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -200,25 +204,25 @@ export function LoginScene({ phase, paused }: SceneControls) {
 
     function program(vertex: string, fragment: string) {
       const result = context.createProgram();
-      if (!result) throw new Error("WebGL program unavailable");
+      if (!result) throw new Error("WebGL-Programm nicht verfügbar");
       programs.push(result);
       for (const [type, source] of [[context.VERTEX_SHADER, vertex], [context.FRAGMENT_SHADER, fragment]] as const) {
         const shader = context.createShader(type);
-        if (!shader) throw new Error("WebGL shader unavailable");
+        if (!shader) throw new Error("WebGL-Shader nicht verfügbar");
         shaders.push(shader);
         context.shaderSource(shader, source);
         context.compileShader(shader);
-        if (!context.getShaderParameter(shader, context.COMPILE_STATUS)) throw new Error("WebGL shader could not compile");
+        if (!context.getShaderParameter(shader, context.COMPILE_STATUS)) throw new Error("WebGL-Shader ließ sich nicht übersetzen");
         context.attachShader(result, shader);
       }
       context.linkProgram(result);
-      if (!context.getProgramParameter(result, context.LINK_STATUS)) throw new Error("WebGL program could not link");
+      if (!context.getProgramParameter(result, context.LINK_STATUS)) throw new Error("WebGL-Programm ließ sich nicht binden");
       return result;
     }
 
     function buffer(data: Float32Array | Uint16Array, element = false) {
       const result = context.createBuffer();
-      if (!result) throw new Error("WebGL buffer unavailable");
+      if (!result) throw new Error("WebGL-Puffer nicht verfügbar");
       buffers.push(result);
       const target = element ? context.ELEMENT_ARRAY_BUFFER : context.ARRAY_BUFFER;
       context.bindBuffer(target, result);
@@ -306,7 +310,8 @@ export function LoginScene({ phase, paused }: SceneControls) {
     }
 
     function useProgram(program: WebGLProgram) {
-      // Each pass owns its vertex inputs; unused arrays must not retain old buffers.
+      // Jeder Durchgang bringt seine eigenen Eingänge mit; alte Zeiger dürfen
+      // nicht hängen bleiben.
       for (const location of enabledAttributes) context.disableVertexAttribArray(location);
       enabledAttributes.clear();
       context.useProgram(program);

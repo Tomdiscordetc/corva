@@ -32,6 +32,14 @@ const STEP_VIEWS = {
   recoverSent: RecoverSentStep,
 } as const;
 
+/** Die vier Kanäle unter der Überschrift — Reihenfolge wie im Vertrieb. */
+const SCENE_CHANNELS = [
+  { key: "email", Icon: AtSign },
+  { key: "phone", Icon: Phone },
+  { key: "whatsapp", Icon: MessageCircle },
+  { key: "social", Icon: Radio },
+] as const;
+
 export function LoginPage() {
   const [scenePaused, setScenePaused] = useState(false);
   const status = useAuthStore((s) => s.status);
@@ -129,7 +137,7 @@ export function LoginPage() {
         <section className="auth-login-story" aria-label={t("app.tagline")} inert={authFlowActive}>
           <div className="auth-scene-caption" aria-hidden>
             <span className="auth-scene-caption-line" />
-            <span>CORVA / CONNECTED</span>
+            <span>{t("auth.login.sceneBadge")}</span>
           </div>
           <motion.div variants={panel} initial="hidden" animate="show" className="auth-story-copy">
             <motion.p variants={row} className="auth-story-eyebrow">
@@ -141,13 +149,8 @@ export function LoginPage() {
             </motion.h2>
             <motion.p variants={row} className="auth-story-description">{t("app.tagline")}.</motion.p>
             <motion.div variants={row} className="auth-channel-list">
-              {[
-                { label: "E-Mail", Icon: AtSign },
-                { label: "Telefon", Icon: Phone },
-                { label: "WhatsApp", Icon: MessageCircle },
-                { label: "Social", Icon: Radio },
-              ].map(({ label, Icon }) => (
-                <span key={label}><Icon aria-hidden />{label}</span>
+              {SCENE_CHANNELS.map(({ key, Icon }) => (
+                <span key={key}><Icon aria-hidden />{t(`auth.login.sceneChannel.${key}`)}</span>
               ))}
             </motion.div>
           </motion.div>

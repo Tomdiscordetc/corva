@@ -1,7 +1,10 @@
 @import "tailwindcss";
 @import "./fonts.css";
 
-/* Login-only art direction. Nothing below changes the dashboard palette. */
+/*
+  Bildsprache nur für die Anmeldung. Sie setzt die Tokens örtlich neu und
+  lässt die Palette der App darunter unberührt.
+*/
 .auth-login {
   --auth-scene-base-rgb: 5 12 25;
   --auth-scene-metal-rgb: 150 177 207;
@@ -562,24 +565,6 @@ body {
   background:
     radial-gradient(circle at 76% 22%, color-mix(in oklch, var(--color-accent) 13%, transparent), transparent 30%),
     radial-gradient(circle at 18% 82%, color-mix(in oklch, var(--color-accent) 8%, transparent), transparent 28%);
-}
-
-.auth-brand-grid {
-  background-image:
-    linear-gradient(color-mix(in oklch, var(--color-on-auth-brand) 7%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in oklch, var(--color-on-auth-brand) 7%, transparent) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: linear-gradient(to bottom, transparent, black 18%, black 78%, transparent);
-}
-
-.auth-brand-glow {
-  background:
-    radial-gradient(circle at 50% 48%, color-mix(in oklch, var(--color-accent) 25%, transparent), transparent 32%),
-    radial-gradient(circle at 92% 8%, color-mix(in oklch, var(--color-accent) 18%, transparent), transparent 24%);
-}
-
-.auth-unlock-field {
-  background: radial-gradient(circle at center, color-mix(in oklch, var(--color-accent) 10%, transparent), transparent 34%);
 }
 
 .verification-orbit {
