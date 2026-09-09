@@ -9,8 +9,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "server": "node --env-file-if-exists=server/.env server/index.mjs",
-    "server:create-user": "node --env-file-if-exists=server/.env server/create-user.mjs",
+    "server": "node --env-file-if-exists=server/.env server/src/start.mjs",
+    "server:create-user": "node --env-file-if-exists=server/.env server/src/create-user.mjs",
     "test:server": "node --test server/test/*.test.mjs"
   },
   "dependencies": {
