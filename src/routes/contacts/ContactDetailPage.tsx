@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -47,6 +47,11 @@ export function ContactDetailPage() {
   const user = useAuthStore((s) => s.user);
   const [editOpen, setEditOpen] = useState(false);
   const [logOpen, setLogOpen] = useState(false);
+
+  // Im Server-Modus liegt der Verlauf erst nach dem Nachladen vor.
+  useEffect(() => {
+    contacts.ensureHistory(contactId);
+  }, [contactId, contacts]);
 
   const contact = contacts.byId(contactId);
 

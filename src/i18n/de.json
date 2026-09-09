@@ -344,6 +344,7 @@
     "subtitle": "Anfragen, Beratungen und Bestandskunden deiner Agentur.",
     "demoNotice": "Beispielkontakte — noch nicht mit dem Server verbunden",
     "localHint": "Kontakte liegen bis zum Server-Abschnitt nur auf diesem Gerät.",
+    "serverHint": "Kontakte liegen beim Mandanten und sind für dein Team sichtbar.",
     "new": "Neuer Kontakt",
     "search": "Name, Ort, E-Mail oder Notiz suchen …",
     "count": "{{count}} von {{total}} Kontakten",

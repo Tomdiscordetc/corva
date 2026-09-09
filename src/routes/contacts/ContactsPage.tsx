@@ -7,7 +7,7 @@ import { StatusPill } from "@/components/ui/StatusPill";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { toast } from "@/components/ui/Toast";
 import { useContacts } from "@/hooks/useContacts";
-import { useAuthStore } from "@/store/auth";
+import { SERVER_MODE, useAuthStore } from "@/store/auth";
 import { PIPELINE_STAGES, contactName, type Contact, type PipelineStage } from "@/demo/contacts";
 import { DEFAULT_CONTACT_FILTER } from "@/lib/contactFilters";
 import { ContactTable } from "./ContactTable";
@@ -166,7 +166,7 @@ export function ContactsPage() {
         </AnimatePresence>
       )}
 
-      <p className="text-2xs text-text-faint">{t("contacts.localHint")}</p>
+      <p className="text-2xs text-text-faint">{t(SERVER_MODE ? "contacts.serverHint" : "contacts.localHint")}</p>
 
       <ContactDialog
         open={dialogOpen}
