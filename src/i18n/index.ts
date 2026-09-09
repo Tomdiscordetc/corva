@@ -1,7 +1,10 @@
 import de from "./de.json";
 import settings from "./settings.de.json";
+import serverAuth from "./serverAuth.de.json";
+import serverPreferences from "./serverPreferences.de.json";
+import serverSettings from "./serverSettings.de.json";
 
-const dictionary = { ...de, settings };
+const dictionary = { ...de, settings, serverAuth, serverPreferences, serverSettings };
 type Dict = typeof dictionary;
 
 /** Holt einen verschachtelten Wert per Punktpfad, z. B. "auth.login.title". */
