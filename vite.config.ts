@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { fileURLToPath } from "node:url";
@@ -11,6 +11,10 @@ export default defineConfig(({ command }) => ({
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
+  },
+  // Die Servertests laufen mit dem Testlauf von Node, nicht mit Vitest.
+  test: {
+    exclude: ["node_modules/**", "dist/**", "server/**"],
   },
   server: {
     port: 5173,
